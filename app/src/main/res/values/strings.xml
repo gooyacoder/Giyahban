@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Giyahban</string>
+    <string name="add">Add New Plant</string>
+    <string name="take_a_picture">Take a Picture</string>
+    <string name="plant_data">Plant Data</string>
+    <string name="codepro_2022">Codepro 2022</string>
+    <string name="plant_image">Plant Image</string>
+    <string name="watering">آبیاری</string>
+    <string name="fertilizer">کود</string>
+    <string name="fertilizer_label">Fertilizer</string>
+    <string name="add_plant">Add Plant</string>
+    <string name="title_activity_edit">EditActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="test_edit_plant_activity">Test Edit Plant Activity</string>
+    <string name="add_new_plant">Add New Plant</string>
+    <string name="name">Name</string>
+    <string name="editplantactivity">EditPlantActivity</string>
 </resources>
