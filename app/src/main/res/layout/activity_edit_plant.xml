@@ -1,169 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_vertical" >
+        android:gravity="center_vertical">
 
+        <TextView
+            android:id="@+id/plantName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="10dp"
+            android:text="نام گیاه"
+            android:textColor="#000000"
+            android:textSize="27sp" />
 
-    <TextView
-        android:id="@+id/plantName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="نام گیاه"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="40dp"
-        android:layout_marginBottom="40dp"
-        android:textColor="#000000"
-        />
-
+        <TextView
+            android:id="@+id/lbl_fertilizer_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/plantName"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:text="کودهای گیاه"
+            android:textColor="#000000"
+            android:textSize="13sp" />
 
         <ListView
             android:id="@+id/fertilizer_list"
             android:layout_width="280dp"
             android:layout_height="174dp"
-            android:layout_below="@id/plantName"
-            android:layout_marginTop="10dp"
-            android:listSelector="@android:color/darker_gray"
-            android:minHeight="174dp"
+            android:layout_below="@id/lbl_fertilizer_list"
             android:layout_centerHorizontal="true"
-            />
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="59dp"
-        android:layout_marginTop="40dp"
-        android:gravity="right"
-        android:orientation="horizontal">
+            android:layout_marginTop="3dp"
+            android:listSelector="@android:color/darker_gray"
+            android:minHeight="174dp" />
 
         <Button
-            android:id="@+id/fertilizer_addButton"
-            android:layout_width="44dp"
+            android:id="@+id/removeFertilizerBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fertilizer_list"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="4dp"
+            android:onClick="removeFertilizerBtnClicked"
+            android:text="حذف" />
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
             android:layout_height="38dp"
-            android:layout_marginLeft="13dp"
-            android:onClick="fertilizerBtnClicked"
-            android:text="+"
-            android:textSize="10sp" />
+            android:layout_below="@id/removeFertilizerBtn"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="0dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/fertilizing_days"
-            android:layout_width="61dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="13dp"
-            android:ems="10"
-            android:hint="روز"
-            android:inputType="textPersonName"
-            android:textSize="10sp" />
+            <Button
+                android:id="@+id/fertilizer_addButton"
+                android:layout_width="44dp"
+                android:layout_height="38dp"
+                android:layout_marginLeft="13dp"
+                android:onClick="fertilizerBtnClicked"
+                android:text="+"
+                android:textSize="10sp" />
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="13dp"
-            android:text="دوره" />
+            <EditText
+                android:id="@+id/fertilizing_days"
+                android:layout_width="61dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="13dp"
+                android:ems="10"
+                android:hint="روز"
+                android:inputType="textPersonName"
+                android:textSize="10sp" />
 
-        <Spinner
-            android:id="@+id/fertilizerDropDownSpinner"
-            android:layout_width="140dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="13dp"
-            android:background="@android:drawable/btn_dropdown"
-            android:spinnerMode="dropdown" />
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="13dp"
+                android:text="دوره" />
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="13dp"
-            android:layout_marginRight="10dp"
-            android:text="کود" />
-    </LinearLayout>
+            <Spinner
+                android:id="@+id/fertilizerDropDownSpinner"
+                android:layout_width="140dp"
+                android:layout_height="37dp"
+                android:layout_marginLeft="13dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="wrap_content"
-        android:layout_height="66dp"
-        android:layout_marginTop="30dp"
-        android:gravity="end"
-        android:orientation="horizontal"
-     >
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="13dp"
+                android:layout_marginRight="10dp"
+                android:text="کود" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="49dp"
+            android:layout_below="@id/linearLayout"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="0dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/removeWateringBtn"
-            android:layout_width="44dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:onClick="removeWateringBtnClicked"
-            android:text="-"
-            />
+            <Button
+                android:id="@+id/removeWateringBtn"
+                android:layout_width="44dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:onClick="removeWateringBtnClicked"
+                android:text="-" />
 
-        <TextView
-            android:id="@+id/currentWatering"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="16dp"
-            android:hint="آبیاری" />
+            <TextView
+                android:id="@+id/currentWatering"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="16dp"
+                android:hint="آبیاری" />
 
-        <Button
-            android:id="@+id/watering_addButton"
-            android:layout_width="44dp"
-            android:layout_height="38dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="16dp"
-            android:onClick="wateringBtnClicked"
-            android:text="+"
-            android:textSize="10sp" />
+            <Button
+                android:id="@+id/watering_addButton"
+                android:layout_width="44dp"
+                android:layout_height="38dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="16dp"
+                android:onClick="wateringBtnClicked"
+                android:text="+"
+                android:textSize="10sp" />
 
-        <EditText
-            android:id="@+id/watering_days"
-            android:layout_width="66dp"
-            android:layout_height="45dp"
-            android:layout_marginLeft="20dp"
-            android:ems="10"
-            android:hint="روز"
-            android:inputType="textPersonName"
-            android:textSize="10sp" />
+            <EditText
+                android:id="@+id/watering_days"
+                android:layout_width="66dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="20dp"
+                android:ems="10"
+                android:hint="روز"
+                android:inputType="textPersonName"
+                android:textSize="10sp" />
 
-        <TextView
-            android:id="@+id/wateringlbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="10dp"
-            android:text="آبیاری" />
-
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/removeFertilizerBtn"
-        android:layout_width="44dp"
-        android:layout_height="38dp"
-        android:layout_marginTop="108dp"
-        android:text="-"
-        android:onClick="removeFertilizerBtnClicked"
-  />
-
+            <TextView
+                android:id="@+id/wateringlbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="آبیاری" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/closeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="38dp"
+            android:layout_below="@id/linearLayout2"
+            android:layout_centerHorizontal="true"
             android:onClick="closeButtonClicked"
-            android:text="خروج"
-            />
+            android:text="خروج" />
     </RelativeLayout>
 
 
