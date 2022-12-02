@@ -7,5 +7,5 @@ data class Plant(val plant_name: String,
                  val water_date: Long,
                  val water_period: Int,
                  val fertilizers: ArrayList<String>,
-                 val fertilizer_dates: ArrayList<Long>,
-                 val fertilizer_periods: ArrayList<Int> )  {}
+                 val fertilizer_dates: ArrayList<String>,
+                 val fertilizer_periods: ArrayList<String> )  {}
