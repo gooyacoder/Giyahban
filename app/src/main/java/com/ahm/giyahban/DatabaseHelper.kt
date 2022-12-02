@@ -16,7 +16,7 @@ class DatabaseHelper(context: Context?) :
     override fun onCreate(db: SQLiteDatabase) {
 
         // creating table
-        db.execSQL(CREATE_TABLE_IMAGE)
+        db.execSQL(CREATE_TABLE_PLANT)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -47,8 +47,8 @@ class DatabaseHelper(context: Context?) :
         private const val KEY_PLANT_FERTILIZER_PERIODS = "plant_fertilizer_periods"
 
         // Table create statement
-        private const val CREATE_TABLE_IMAGE = "CREATE TABLE " + DB_TABLE + "(" +
-                KEY_NAME + " TEXT," +
+        private const val CREATE_TABLE_PLANT = "CREATE TABLE " + DB_TABLE + "(" +
+                KEY_NAME + " TEXT NOT NULL UNIQUE," +
                 KEY_IMAGE + " BLOB," +
                 KEY_PLANT_WATER_DATE + " TEXT," +
                 KEY_PLANT_WATER_PERIOD + " TEXT," +
@@ -59,8 +59,8 @@ class DatabaseHelper(context: Context?) :
     }
 
     @Throws(SQLiteException::class)
-    fun addEntry(name: String?,
-                 image: ByteArray?,
+    fun addEntry(name: String,
+                 image: ByteArray,
                  water_date: Long?,
                  water_period: Int?,
                  fertilizers: ArrayList<String>?,
@@ -70,9 +70,9 @@ class DatabaseHelper(context: Context?) :
         val cv = ContentValues()
         val water_date_string = water_date.toString()
         val water_period_string = water_period.toString()
-        val fertilizers_string = convertArrayToString(fertilizers!!)
-        val fertilizer_dates_string = convertArrayToString(fertilizer_dates!!)
-        val fertilizer_periods_string = convertArrayToString(fertilizer_periods!!)
+        val fertilizers_string = convertArrayToString(fertilizers)
+        val fertilizer_dates_string = convertArrayToString(fertilizer_dates)
+        val fertilizer_periods_string = convertArrayToString(fertilizer_periods)
         cv.put(KEY_NAME, name)
         cv.put(KEY_IMAGE, image)
         cv.put(KEY_PLANT_WATER_DATE, water_date_string)
@@ -80,7 +80,7 @@ class DatabaseHelper(context: Context?) :
         cv.put(KEY_PLANT_FERTILIZERS, fertilizers_string)
         cv.put(KEY_PLANT_FERTILIZER_DATES, fertilizer_dates_string)
         cv.put(KEY_PLANT_FERTILIZER_PERIODS, fertilizer_periods_string)
-        database.insert(DB_TABLE, null, cv)
+        database.insert(DB_TABLE, null, cv) // returns -1 if insert fails, show message that the plant name exists.
         database.close()
     }
 
@@ -97,28 +97,13 @@ class DatabaseHelper(context: Context?) :
             val fertilizers = cursor.getString(4)
             val fertilizer_dates = cursor.getString(5)
             val fertilizer_periods = cursor.getString(6)
-            val fertilizersArrayList: ArrayList<String> = ArrayList<String>()
-            val fertilizersArray = convertStringToArray(fertilizers)
-            for (i in fertilizersArray!!){
-                fertilizersArrayList.add(i)
-            }
-            val fertilizers_dates_ArrayList = ArrayList<String>()
-            val fertilizers_dates_Array = convertStringToArray(fertilizer_dates)
-            for (i in fertilizers_dates_Array!!){
-                fertilizers_dates_ArrayList.add(i)
-            }
-            val fertilizer_periods_ArrayList = ArrayList<String>()
-            val fertilizer_periods_Array = convertStringToArray(fertilizer_periods)
-            for(i in fertilizer_periods_Array!!){
-                fertilizer_periods_ArrayList.add(i)
-            }
             val plant = Plant(name,
                 imagebyte,
                 water_date.toLong(),
                 water_period.toInt(),
-                fertilizersArrayList,
-                fertilizers_dates_ArrayList,
-                fertilizer_periods_ArrayList)
+                convertArrayToArrayList(convertStringToArray(fertilizers)),
+                convertArrayToArrayList(convertStringToArray(fertilizer_dates)),
+                convertArrayToArrayList(convertStringToArray(fertilizer_periods)))
             plants.add(plant)
         }
         cursor.close()
@@ -143,20 +128,30 @@ class DatabaseHelper(context: Context?) :
 
     }
 
-    var strSeparator = "__,__"
-    fun convertArrayToString(array: ArrayList<String>): String? {
+    fun convertArrayToString(array: ArrayList<String>?): String? {
+        val strSeparator = "__,__"
         var str = ""
-        for (i in array.indices) {
-            str = str + array[i]
-            // Do not append comma at the end of last element
-            if (i < array.size - 1) {
-                str = str + strSeparator
+        if(array != null){
+            for (i in array.indices) {
+                str = str + array[i]
+                // Do not append comma at the end of last element
+                if (i < array.size - 1) {
+                    str = str + strSeparator
+                }
             }
         }
         return str
     }
 
     fun convertStringToArray(str: String): Array<String>? {
+        val strSeparator = "__,__"
         return str.split(strSeparator).toTypedArray()
+    }
+    fun convertArrayToArrayList(array_data: Array<String>?): ArrayList<String>? {
+        val arrayList: ArrayList<String> = ArrayList<String>()
+        for (i in array_data!!){
+            arrayList.add(i)
+        }
+        return arrayList
     }
 }
