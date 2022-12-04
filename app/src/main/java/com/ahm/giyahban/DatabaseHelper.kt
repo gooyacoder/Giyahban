@@ -118,111 +118,61 @@ class DatabaseHelper(context: Context?) :
         db.close()
     }
 
-    fun updatePlantImage(name: String,
-                    image: ByteArray?,
-                    water_date: Long?,
-                    water_period: Int?,
-                    fertilizers: ArrayList<String>?,
-                    fertilizer_dates: ArrayList<String>?,
-                    fertilizer_periods: ArrayList<String>?){
+    fun updatePlantImage(name: String, image: ByteArray){
 
         var update_query = ""
-        if(image != null){
-            update_query = "update $DB_TABLE set $KEY_IMAGE = $image where $KEY_NAME = $name;"
-        }
+        update_query = "update $DB_TABLE set $KEY_IMAGE = $image where $KEY_NAME = $name;"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
     }
 
-    fun updatePlantWaterDate(name: String,
-                         image: ByteArray?,
-                         water_date: Long?,
-                         water_period: Int?,
-                         fertilizers: ArrayList<String>?,
-                         fertilizer_dates: ArrayList<String>?,
-                         fertilizer_periods: ArrayList<String>?) {
+    fun updatePlantWaterDate(name: String, water_date: Long ) {
 
         var update_query = ""
-        if(water_date != null){
-            val water_date_string = water_date.toString()
-            update_query = "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$water_date_string' where $KEY_NAME = $name;"
-        }
+        val water_date_string = water_date.toString()
+        update_query = "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$water_date_string' where $KEY_NAME = $name;"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
 
     }
 
-    fun updatePlantWaterPeriod(name: String,
-                               image: ByteArray?,
-                               water_date: Long?,
-                               water_period: Int?,
-                               fertilizers: ArrayList<String>?,
-                               fertilizer_dates: ArrayList<String>?,
-                               fertilizer_periods: ArrayList<String>?) {
+    fun updatePlantWaterPeriod(name: String,  water_period: Int ) {
         var update_query = ""
-        if(water_period != null){
-            val water_period_string = water_period.toString()
-            update_query = "update $DB_TABLE set $KEY_PLANT_WATER_PERIOD = '$water_period_string' where $KEY_NAME = $name;"
-        }
+        val water_period_string = water_period.toString()
+        update_query = "update $DB_TABLE set $KEY_PLANT_WATER_PERIOD = '$water_period_string' where $KEY_NAME = $name;"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
     }
 
-    fun updatePlantFertilizers(name: String,
-                             image: ByteArray?,
-                             water_date: Long?,
-                             water_period: Int?,
-                             fertilizers: ArrayList<String>?,
-                             fertilizer_dates: ArrayList<String>?,
-                             fertilizer_periods: ArrayList<String>?) {
+    fun updatePlantFertilizers(name: String, fertilizers: ArrayList<String>) {
         var update_query = ""
-        if(fertilizers != null){
-            val fertilizers_string = convertArrayToString(fertilizers)
-            update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers_string' where $KEY_NAME = $name;"
-        }
+        val fertilizers_string = convertArrayToString(fertilizers)
+        update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers_string' where $KEY_NAME = $name;"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
     }
 
-    fun updatePlantFertilizerDates(name: String,
-                              image: ByteArray?,
-                              water_date: Long?,
-                              water_period: Int?,
-                              fertilizers: ArrayList<String>?,
-                              fertilizer_dates: ArrayList<String>?,
-                              fertilizer_periods: ArrayList<String>?) {
+    fun updatePlantFertilizerDates(name: String, fertilizer_dates: ArrayList<String> ) {
         var update_query = ""
-        if(fertilizer_dates != null){
-            val fertilizer_dates_string = convertArrayToString(fertilizer_dates)
-            update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZER_DATES = '$fertilizer_dates_string' where $KEY_NAME = $name;"
-        }
+        val fertilizer_dates_string = convertArrayToString(fertilizer_dates)
+        update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZER_DATES = '$fertilizer_dates_string' where $KEY_NAME = $name;"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
     }
 
-    fun updatePlantFertilizerPeriods(name: String,
-                                   image: ByteArray?,
-                                   water_date: Long?,
-                                   water_period: Int?,
-                                   fertilizers: ArrayList<String>?,
-                                   fertilizer_dates: ArrayList<String>?,
-                                   fertilizer_periods: ArrayList<String>?) {
+    fun updatePlantFertilizerPeriods(name: String, fertilizer_periods: ArrayList<String>) {
         var update_query = ""
-        if(fertilizer_periods != null){
-            val fertilizer_periods_string = convertArrayToString(fertilizer_periods)
-            update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZER_PERIODS = '$fertilizer_periods_string' where $KEY_NAME = $name;"
-        }
+        val fertilizer_periods_string = convertArrayToString(fertilizer_periods)
+        update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZER_PERIODS = '$fertilizer_periods_string' where $KEY_NAME = $name;"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
     }
-
-
 
     fun convertArrayToString(array: ArrayList<String>?): String? {
         val strSeparator = "__,__"

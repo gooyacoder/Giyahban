@@ -6,8 +6,9 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_add_plant.*
+
 
 
 class AddPlantActivity : AppCompatActivity() {
@@ -18,12 +19,14 @@ class AddPlantActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_plant)
 
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == RESULT_OK) {
             imageBitmap = data?.extras?.get("data") as Bitmap
+            val plant_preview: ImageView = findViewById(R.id.plant_preview)
             plant_preview.setImageBitmap(imageBitmap)
         }
     }

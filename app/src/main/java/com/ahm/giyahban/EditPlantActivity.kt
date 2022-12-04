@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AbsListView.CHOICE_MODE_SINGLE
 import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_edit_plant.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -19,12 +19,13 @@ class EditPlantActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_plant)
-        val items = arrayOf( "20-20-20", "12-12-36", "10-52-10", "3-11-38",
+      /*  val items = arrayOf( "20-20-20", "12-12-36", "10-52-10", "3-11-38",
             "هیومیک اسید", "قارچ کش", "اسید آمینه", "جلبک دریایی", "سولفات منیزیم",
             "سوپر فسفات", "میکرونوترینت", "آهن")
 
         val adapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(
             this, R.layout.custom_spinner_view, items)
+        val fertilizerDropDownSpinner: Spinner = findViewById(R.id.fertilizerDropDownSpinner)
         fertilizerDropDownSpinner.setAdapter(adapter)
         var plant_name = intent.getStringExtra("plantName")
         plantName.text = plant_name
@@ -35,7 +36,7 @@ class EditPlantActivity : AppCompatActivity() {
         }
 
         updateFertilizerList()
-        updateCurrentWatering()
+        updateCurrentWatering()*/
 
     }
 

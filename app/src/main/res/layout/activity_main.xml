@@ -12,6 +12,7 @@
         android:layout_height="70dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="30dp"
+        android:onClick="add_plant_btn_clicked"
         android:text="گیاه جدید" />
 
     <Button
@@ -20,6 +21,7 @@
         android:layout_height="70dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="30dp"
+        android:onClick="edit_plant_btn_clicked"
         android:text="ویرایش گیاه" />
 
     <Button
@@ -28,6 +30,7 @@
         android:layout_height="70dp"
         android:layout_marginBottom="30dp"
         android:layout_gravity="center_horizontal"
+        android:onClick="show_plants_tasks_btn_clicked"
         android:text="نمایش کارهای امروز" />
 
     <Button
@@ -35,5 +38,6 @@
         android:layout_width="200dp"
         android:layout_height="70dp"
         android:layout_gravity="center_horizontal"
+        android:onClick="show_plants_list_btn_clicked"
         android:text="نمایش همه گیاهان" />
 </LinearLayout>
