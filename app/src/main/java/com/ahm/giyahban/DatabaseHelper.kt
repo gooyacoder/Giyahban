@@ -60,26 +60,11 @@ class DatabaseHelper(context: Context?) :
 
     @Throws(SQLiteException::class)
     fun addEntry(name: String,
-                 image: ByteArray,
-                 water_date: Long?,
-                 water_period: Int?,
-                 fertilizers: ArrayList<String>?,
-                 fertilizer_dates: ArrayList<String>?,
-                 fertilizer_periods: ArrayList<String>?) {
+                 image: ByteArray ) {
         val database = this.writableDatabase
         val cv = ContentValues()
-        val water_date_string = water_date.toString()
-        val water_period_string = water_period.toString()
-        val fertilizers_string = convertArrayToString(fertilizers)
-        val fertilizer_dates_string = convertArrayToString(fertilizer_dates)
-        val fertilizer_periods_string = convertArrayToString(fertilizer_periods)
         cv.put(KEY_NAME, name)
         cv.put(KEY_IMAGE, image)
-        cv.put(KEY_PLANT_WATER_DATE, water_date_string)
-        cv.put(KEY_PLANT_WATER_PERIOD, water_period_string)
-        cv.put(KEY_PLANT_FERTILIZERS, fertilizers_string)
-        cv.put(KEY_PLANT_FERTILIZER_DATES, fertilizer_dates_string)
-        cv.put(KEY_PLANT_FERTILIZER_PERIODS, fertilizer_periods_string)
         database.insert(DB_TABLE, null, cv) // returns -1 if insert fails, show message that the plant name exists.
         database.close()
     }
@@ -99,11 +84,11 @@ class DatabaseHelper(context: Context?) :
             val fertilizer_periods = cursor.getString(6)
             val plant = Plant(name,
                 imagebyte,
-                water_date.toLong(),
-                water_period.toInt(),
-                convertArrayToArrayList(convertStringToArray(fertilizers)),
-                convertArrayToArrayList(convertStringToArray(fertilizer_dates)),
-                convertArrayToArrayList(convertStringToArray(fertilizer_periods)))
+                if(water_date != null) water_date.toLong() else null,
+                if(water_period != null) water_period.toInt() else null,
+                if(fertilizers != null) convertArrayToArrayList(convertStringToArray(fertilizers)) else null,
+                if(fertilizer_dates != null) convertArrayToArrayList(convertStringToArray(fertilizer_dates)) else null,
+                if(fertilizer_periods != null) convertArrayToArrayList(convertStringToArray(fertilizer_periods)) else null)
             plants.add(plant)
         }
         cursor.close()
