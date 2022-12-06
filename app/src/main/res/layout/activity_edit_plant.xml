@@ -10,18 +10,33 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical">
 
-        <TextView
+        <LinearLayout
             android:id="@+id/plantName"
-            android:layout_width="wrap_content"
+            android:layout_width="328dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="10dp"
-            android:text="نام گیاه"
-            android:textColor="#000000"
-            android:textSize="27sp" />
+            android:layout_alignParentEnd="true"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/PlantsDropDownSpinner"
+                android:layout_width="200dp"
+                android:layout_height="37dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown" />
+
+            <TextView
+                android:id="@+id/plantNameLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="10dp"
+                android:text="نام گیاه"
+                android:textColor="#000000"
+                android:textSize="27sp" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/lbl_fertilizer_list"
@@ -41,7 +56,7 @@
             android:layout_below="@id/lbl_fertilizer_list"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="3dp"
-            android:listSelector="@android:color/darker_gray"
+            android:listSelector="#ddffaa"
             android:minHeight="174dp" />
 
         <Button

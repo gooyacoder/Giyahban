@@ -19,6 +19,7 @@ class EditPlantActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_plant)
+        getPlantsFromDatabase()
       /*  val items = arrayOf( "20-20-20", "12-12-36", "10-52-10", "3-11-38",
             "هیومیک اسید", "قارچ کش", "اسید آمینه", "جلبک دریایی", "سولفات منیزیم",
             "سوپر فسفات", "میکرونوترینت", "آهن")
@@ -40,7 +41,20 @@ class EditPlantActivity : AppCompatActivity() {
 
     }
 
-
+    private fun getPlantsFromDatabase() {
+        val db = DatabaseHelper(this)
+        val plants = db.getPlants()
+        db.close()
+        val plantNames: ArrayList<String> = ArrayList()
+        for(plant in plants){
+            plantNames.add(plant.plant_name)
+        }
+        val items = plantNames.toTypedArray()
+        val adapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(
+            this, R.layout.custom_spinner_view, items)
+        val namesDropDownSpinner : Spinner = findViewById(R.id.PlantsDropDownSpinner)
+        namesDropDownSpinner.setAdapter(adapter)
+    }
 
 
     fun closeButtonClicked(view: View) {
