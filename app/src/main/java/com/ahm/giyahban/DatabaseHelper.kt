@@ -185,4 +185,22 @@ class DatabaseHelper(context: Context?) :
         }
         return arrayList
     }
+
+    @JvmName("getFertilizers1")
+    fun getFertilizers(name: String?): MutableMap<ArrayList<String>? , ArrayList<String>?>? {
+        val db = this.writableDatabase
+        val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
+        val cursor = db.rawQuery(query, null)
+        var fertilizers: ArrayList<String>? = ArrayList<String>()
+        var fertilizers_dates: ArrayList<String>? = ArrayList<String>()
+        if (cursor.moveToNext()) {
+            fertilizers = convertArrayToArrayList(convertStringToArray(cursor.getString(4)))
+            fertilizers_dates = convertArrayToArrayList(convertStringToArray(cursor.getString(5)))
+        }
+        cursor.close()
+        db.close()
+        val result : MutableMap<ArrayList<String>? , ArrayList<String>?>? = HashMap()
+        result?.set(fertilizers, fertilizers_dates)
+        return result
+    }
 }

@@ -16,9 +16,15 @@ import java.util.*
 class EditPlantActivity : AppCompatActivity() {
 
     var list_position = 1
+    var plant_position = 1
+    var namesDropDownSpinner : Spinner? = null
+    var plants_names: ArrayList<String>? = null
+    var fertilizer_list: ListView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_plant)
+        prepareUI()
         getPlantsFromDatabase()
         prepareFertilizerDropDownSpinner()
         prepareFertilizerList()
@@ -26,12 +32,19 @@ class EditPlantActivity : AppCompatActivity() {
         updateCurrentWatering()
     }
 
-    private fun prepareFertilizerList() {
-        val fertilizer_list: ListView = findViewById(R.id.fertilizer_list)
-        fertilizer_list.choiceMode = CHOICE_MODE_SINGLE
-        fertilizer_list.setOnItemClickListener { parent, view, position, id ->
-            list_position = position
+    private fun prepareUI() {
+        namesDropDownSpinner = findViewById(R.id.PlantsDropDownSpinner)
+        namesDropDownSpinner?.setOnItemClickListener{ parent, view, position, id ->
+            plant_position = position
+        }
+        fertilizer_list = findViewById(R.id.fertilizer_list)
+    }
 
+    private fun prepareFertilizerList() {
+
+        fertilizer_list?.choiceMode = CHOICE_MODE_SINGLE
+        fertilizer_list?.setOnItemClickListener { parent, view, position, id ->
+            list_position = position
         }
     }
 
@@ -50,15 +63,15 @@ class EditPlantActivity : AppCompatActivity() {
         val db = DatabaseHelper(this)
         val plants = db.getPlants()
         db.close()
-        val plantNames: ArrayList<String> = ArrayList()
+        plants_names = ArrayList<String>()
         for(plant in plants){
-            plantNames.add(plant.plant_name)
+            plants_names!!.add(plant.plant_name)
         }
-        val items = plantNames.toTypedArray()
+        val items = plants_names!!.toTypedArray()
         val adapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(
             this, R.layout.custom_spinner_view, items)
-        val namesDropDownSpinner : Spinner = findViewById(R.id.PlantsDropDownSpinner)
-        namesDropDownSpinner.setAdapter(adapter)
+
+        namesDropDownSpinner?.setAdapter(adapter)
     }
 
 
@@ -138,19 +151,23 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     private fun updateFertilizerList() {
-//        var db = FertilizerDatabaseHelper(this)
-//        var fertilizers = db.getFertilizers(intent.getStringExtra("plantName"))
-//        val fertilizerAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
-//        for(fertilizer in fertilizers){
-//
-//            Thread(Runnable {
-//                runOnUiThread{
-//                    fertilizerAdapter.add(fertilizer.fertilizerName)
-//                }
-//            }).start()
-//        }
-//        fertilizer_list.adapter = fertilizerAdapter
-//        db.close()
+        val db = DatabaseHelper(this)
+        val fertilizers = db.getFertilizers(plants_names?.get(plant_position))
+        val fertilizerAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
+
+        if(fertilizers != null){
+            for((fname, fdate) in fertilizers){
+
+                Thread(Runnable {
+                    runOnUiThread{
+                        fertilizerAdapter.add(fname.toString() + " : " + fdate.toString())
+                    }
+                }).start()
+            }
+            fertilizer_list?.adapter = fertilizerAdapter
+        }
+
+        db.close()
     }
 
     private fun updateCurrentWatering() {
