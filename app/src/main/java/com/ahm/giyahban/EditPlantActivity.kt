@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AbsListView.CHOICE_MODE_SINGLE
 import android.widget.ArrayAdapter
+import android.widget.ListView
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 class EditPlantActivity : AppCompatActivity() {
@@ -20,7 +20,23 @@ class EditPlantActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_plant)
         getPlantsFromDatabase()
-      /*  val items = arrayOf( "20-20-20", "12-12-36", "10-52-10", "3-11-38",
+        prepareFertilizerDropDownSpinner()
+        prepareFertilizerList()
+        updateFertilizerList()
+        updateCurrentWatering()
+    }
+
+    private fun prepareFertilizerList() {
+        val fertilizer_list: ListView = findViewById(R.id.fertilizer_list)
+        fertilizer_list.choiceMode = CHOICE_MODE_SINGLE
+        fertilizer_list.setOnItemClickListener { parent, view, position, id ->
+            list_position = position
+
+        }
+    }
+
+    private fun prepareFertilizerDropDownSpinner() {
+        val items = arrayOf( "20-20-20", "12-12-36", "10-52-10", "3-11-38",
             "هیومیک اسید", "قارچ کش", "اسید آمینه", "جلبک دریایی", "سولفات منیزیم",
             "سوپر فسفات", "میکرونوترینت", "آهن")
 
@@ -28,17 +44,6 @@ class EditPlantActivity : AppCompatActivity() {
             this, R.layout.custom_spinner_view, items)
         val fertilizerDropDownSpinner: Spinner = findViewById(R.id.fertilizerDropDownSpinner)
         fertilizerDropDownSpinner.setAdapter(adapter)
-        var plant_name = intent.getStringExtra("plantName")
-        plantName.text = plant_name
-        fertilizer_list.choiceMode = CHOICE_MODE_SINGLE
-        fertilizer_list.setOnItemClickListener { parent, view, position, id ->
-            list_position = position
-
-        }
-
-        updateFertilizerList()
-        updateCurrentWatering()*/
-
     }
 
     private fun getPlantsFromDatabase() {
