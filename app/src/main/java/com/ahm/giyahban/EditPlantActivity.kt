@@ -3,23 +3,26 @@ package com.ahm.giyahban
 
 import android.os.Bundle
 import android.view.View
+import android.widget.*
 import android.widget.AbsListView.CHOICE_MODE_SINGLE
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import android.widget.Spinner
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class EditPlantActivity : AppCompatActivity() {
 
-    var list_position = 1
-    var plant_position = 1
+    var list_position = 0
+    var plant_position = 0
     var namesDropDownSpinner : Spinner? = null
     var plants_names: ArrayList<String>? = null
     var fertilizer_list: ListView? = null
+    var fertilizerDropDownSpinner: Spinner? = null
+    var fertilizing_days: EditText? = null
+    var fertilizerDatesArrayList: ArrayList<String>? = null
+    var fertilizerPeriodsArrayList: ArrayList<String>? = null
+    var fertilizersArrayList: ArrayList<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +37,20 @@ class EditPlantActivity : AppCompatActivity() {
 
     private fun prepareUI() {
         namesDropDownSpinner = findViewById(R.id.PlantsDropDownSpinner)
-        namesDropDownSpinner?.setOnItemClickListener{ parent, view, position, id ->
-            plant_position = position
+        fertilizerDropDownSpinner = findViewById(R.id.fertilizerDropDownSpinner)
+        fertilizing_days = findViewById(R.id.fertilizing_days)
+        fertilizerDatesArrayList = ArrayList()
+        fertilizersArrayList = ArrayList()
+        fertilizerPeriodsArrayList = ArrayList()
+        namesDropDownSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                plant_position = position
+                updateFertilizerList()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
         }
         fertilizer_list = findViewById(R.id.fertilizer_list)
     }
@@ -80,25 +95,19 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     fun fertilizerBtnClicked(view: View) {
-//        val plant_name = intent.getStringExtra("plantName")
-//        val fertilizer_name = fertilizerDropDownSpinner.selectedItem.toString()
-//        val days: Long = fertilizing_days.text.toString().toLong()
-//        val data = Data.Builder()
-//        data.putString("plant_name", plant_name)
-//        data.putString("fertilizer_name", fertilizer_name)
-//        data.putString("days", days.toString())
-//        val constraints: Constraints = Constraints.Builder()
-//            .build()
-//        val myFirstWorkBuilder = OneTimeWorkRequest.Builder(FertilizerWorker::class.java)
-//            .setConstraints(constraints)
-//            .setInputData(data.build())
-//            .build()
-//        val workManager = WorkManager.getInstance(applicationContext)
-//        workManager.enqueue(myFirstWorkBuilder)
-//        updateFertilizerList()
-//        Toast.makeText(applicationContext, "$fertilizer_name was successfully added.",
-//            Toast.LENGTH_LONG).show()
-
+        val plant_name = plants_names?.get(plant_position)
+        val fertilizer_name = fertilizerDropDownSpinner?.selectedItem.toString()
+        fertilizersArrayList?.add(fertilizer_name)
+        val days: String = fertilizing_days?.text.toString()
+        fertilizerPeriodsArrayList?.add(days)
+        val calendar = Calendar.getInstance()
+        val today = calendar.time.time.toString()
+        fertilizerDatesArrayList?.add(today)
+        val db = DatabaseHelper(this)
+        db.addFertilizer(plant_name, convertArrayToString(fertilizersArrayList),
+            convertArrayToString(fertilizerDatesArrayList), convertArrayToString(fertilizerPeriodsArrayList))
+        db.close()
+        updateFertilizerList()
     }
 
     fun wateringBtnClicked(view: View) {
@@ -156,11 +165,11 @@ class EditPlantActivity : AppCompatActivity() {
         val fertilizerAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
 
         if(fertilizers != null){
-            for((fname, fdate) in fertilizers){
+            for((fn, fp) in fertilizers){
 
                 Thread(Runnable {
                     runOnUiThread{
-                        fertilizerAdapter.add(fname.toString() + " : " + fdate.toString())
+                        fertilizerAdapter.add(fn.toString() + " : " + fp.toString())
                     }
                 }).start()
             }
@@ -204,5 +213,20 @@ class EditPlantActivity : AppCompatActivity() {
 //        alert.show()
     }
 
+
+    fun convertArrayToString(array: ArrayList<String>?): String? {
+        val strSeparator = "__,__"
+        var str = ""
+        if(array != null){
+            for (i in array.indices) {
+                str = str + array[i]
+                // Do not append comma at the end of last element
+                if (i < array.size - 1) {
+                    str = str + strSeparator
+                }
+            }
+        }
+        return str
+    }
 
 }
