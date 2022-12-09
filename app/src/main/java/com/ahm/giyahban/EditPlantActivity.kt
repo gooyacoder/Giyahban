@@ -2,6 +2,7 @@ package com.ahm.giyahban
 
 
 import android.os.Bundle
+import android.provider.ContactsContract.Data
 import android.view.View
 import android.widget.*
 import android.widget.AbsListView.CHOICE_MODE_SINGLE
@@ -56,17 +57,17 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     private fun prepareFertilizerList() {
-
         fertilizer_list?.choiceMode = CHOICE_MODE_SINGLE
         fertilizer_list?.setOnItemClickListener { parent, view, position, id ->
             list_position = position
         }
+
     }
 
     private fun prepareFertilizerDropDownSpinner() {
         val items = arrayOf( "20-20-20", "12-12-36", "10-52-10", "3-11-38",
-            "هیومیک اسید", "قارچ کش", "اسید آمینه", "جلبک دریایی", "سولفات منیزیم",
-            "سوپر فسفات", "میکرونوترینت", "آهن")
+            "Humic Acid", "Fungicide", "Amino Acid", "Sea Algae", "Magnesium Sulphate",
+            "Super Phosphate", "Micronutrient", "Iron")
 
         val adapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(
             this, R.layout.custom_spinner_view, items)
@@ -95,19 +96,24 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     fun fertilizerBtnClicked(view: View) {
+        val db = DatabaseHelper(this)
         val plant_name = plants_names?.get(plant_position)
         val fertilizer_name = fertilizerDropDownSpinner?.selectedItem.toString()
+        fertilizersArrayList = db.getFertilizersNames(plant_name)
+        fertilizerPeriodsArrayList = db.getFertilizerPeriodsArrayList(plant_name)
         fertilizersArrayList?.add(fertilizer_name)
         val days: String = fertilizing_days?.text.toString()
         fertilizerPeriodsArrayList?.add(days)
         val calendar = Calendar.getInstance()
         val today = calendar.time.time.toString()
         fertilizerDatesArrayList?.add(today)
-        val db = DatabaseHelper(this)
+
         db.addFertilizer(plant_name, convertArrayToString(fertilizersArrayList),
             convertArrayToString(fertilizerDatesArrayList), convertArrayToString(fertilizerPeriodsArrayList))
         db.close()
         updateFertilizerList()
+        val fertilizingEditText : EditText = findViewById(R.id.fertilizing_days)
+        fertilizingEditText.setText("")
     }
 
     fun wateringBtnClicked(view: View) {
@@ -134,49 +140,62 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     fun removeFertilizerBtnClicked(view: View) {
-//        val builder = AlertDialog.Builder(this)
-//        builder.setMessage("Are you sure you want to Delete Fertilizer?")
-//            .setCancelable(false)
-//            .setPositiveButton("Yes") { dialog, id ->
-//                val plant_name = intent.getStringExtra("plantName")
-//                val db = FertilizerDatabaseHelper(this)
-//                val fertilizer_name = fertilizer_list.adapter.
-//                getItem(fertilizer_list.checkedItemPosition)
-//                    .toString()
-//                val fertilizer_id = db.getFertilizerId(plant_name, fertilizer_name)
-//                val fertilizerID = UUID.fromString(fertilizer_id)
-//                WorkManager.getInstance(applicationContext).cancelWorkById(fertilizerID)
-//                db.removeFertilizer(plant_name, fertilizer_name)
-//                db.close()
-//                updateFertilizerList()
-//            }
-//            .setNegativeButton("No") { dialog, id ->
-//                // Dismiss the dialog
-//                dialog.dismiss()
-//            }
-//        val alert = builder.create()
-//        alert.show()
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Are you sure you want to Delete Fertilizer?")
+            .setCancelable(false)
+            .setPositiveButton("Yes") { dialog, id ->
+                val plant_name = plants_names?.get(plant_position)
+                val db = DatabaseHelper(this)
+                val fertilizer_row = fertilizer_list?.adapter?.
+                getItem(fertilizer_list!!.checkedItemPosition)
+                    .toString()
+                val fertilizer_name = ""
+                val text = fertilizer_row.split(':')
+
+
+                val fertilizersNamesArrayList = db.getFertilizersNames(plant_name)
+                val index = fertilizersNamesArrayList?.indexOf(text[0].trim())
+                fertilizersNamesArrayList?.remove(text[0].trim())
+                val fertilizerPeriodsArrayList = db.getFertilizerPeriodsArrayList(plant_name)
+                fertilizerPeriodsArrayList?.removeAt(index!!)
+                db.removeFertilizer(plant_name, convertArrayToString(fertilizersNamesArrayList),
+                                        convertArrayToString(fertilizerPeriodsArrayList))
+                db.close()
+                updateFertilizerList()
+            }
+            .setNegativeButton("No") { dialog, id ->
+                // Dismiss the dialog
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
 
     }
 
     private fun updateFertilizerList() {
-        val db = DatabaseHelper(this)
-        val fertilizers = db.getFertilizers(plants_names?.get(plant_position))
-        val fertilizerAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
+        if(plants_names?.size!! > 0){
+            val db = DatabaseHelper(this)
+            val fertilizers = db.getFertilizers(plants_names?.get(plant_position))
+            val fertilizerAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
 
-        if(fertilizers != null){
-            for((fn, fp) in fertilizers){
-
-                Thread(Runnable {
-                    runOnUiThread{
-                        fertilizerAdapter.add(fn.toString() + " : " + fp.toString())
+            if(fertilizers != null){
+                for((fn, fp) in fertilizers){
+                    for(i in fn!!.indices){
+                        Thread(Runnable {
+                            runOnUiThread{
+                                if(fn[i] != ""){
+                                    fertilizerAdapter.add(fn[i] + " : " + fp?.get(i).toString())
+                                }
+                            }
+                        }).start()
                     }
-                }).start()
+                }
+                fertilizer_list?.adapter = fertilizerAdapter
             }
-            fertilizer_list?.adapter = fertilizerAdapter
+
+            db.close()
         }
 
-        db.close()
     }
 
     private fun updateCurrentWatering() {

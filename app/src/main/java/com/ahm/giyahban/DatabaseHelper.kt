@@ -80,6 +80,14 @@ class DatabaseHelper(context: Context?) :
         db.close()
     }
 
+    fun removeFertilizer(plantName: String?, fertilizersArrayList: String?, fertilizerPeriodsArrayList: String?){
+        val db = this.writableDatabase
+        val updateFertilizerQuery = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizersArrayList'," +
+                " $KEY_PLANT_FERTILIZER_PERIODS = '$fertilizerPeriodsArrayList' where $KEY_NAME = '$plantName';"
+        db.execSQL(updateFertilizerQuery)
+        db.close()
+    }
+
     @JvmName("getPlants1")
     fun getPlants(): MutableList<Plant> {
         val db = this.writableDatabase
@@ -216,4 +224,36 @@ class DatabaseHelper(context: Context?) :
         result?.set(fertilizers, fertilizers_periods)
         return result
     }
+
+    @JvmName("getFertilizers1")
+    fun getFertilizersNames(name: String?): ArrayList<String>? {
+        val db = this.writableDatabase
+        val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
+        val cursor = db.rawQuery(query, null)
+        var fertilizers: ArrayList<String>? = ArrayList<String>()
+        if (cursor.moveToNext()) {
+            if(cursor.getString(4) != null){
+                fertilizers = convertArrayToArrayList(convertStringToArray(cursor.getString(4)))
+            }
+        }
+        cursor.close()
+        db.close()
+        return fertilizers
+    }
+
+    fun getFertilizerPeriodsArrayList(name: String?): ArrayList<String>? {
+        val db = this.writableDatabase
+        val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
+        val cursor = db.rawQuery(query, null)
+        var fertilizerPeriodsArrayList: ArrayList<String>? = ArrayList<String>()
+        if (cursor.moveToNext()) {
+            if(cursor.getString(6) != null){
+                fertilizerPeriodsArrayList = convertArrayToArrayList(convertStringToArray(cursor.getString(6)))
+            }
+        }
+        cursor.close()
+        db.close()
+        return fertilizerPeriodsArrayList
+    }
+
 }
