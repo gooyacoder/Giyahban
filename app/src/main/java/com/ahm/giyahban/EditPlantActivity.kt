@@ -47,6 +47,7 @@ class EditPlantActivity : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 plant_position = position
                 updateFertilizerList()
+                updateCurrentWatering()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -117,26 +118,19 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     fun wateringBtnClicked(view: View) {
-        //val db = FertilizerDatabaseHelper(this)
-//        val plant_name = intent.getStringExtra("plantName")
-//        val days: Long = watering_days.text.toString().toLong()
-//        val data = Data.Builder()
-//        data.putString("plant_name", plant_name)
-//        data.putString("days", days.toString())
-//        val constraints: Constraints = Constraints.Builder()
-//            .build()
-//        val myFirstWorkBuilder = OneTimeWorkRequest.Builder(WaterWorker::class.java)
-//            .setInitialDelay(days, TimeUnit.DAYS)
-//            .setConstraints(constraints)
-//            .setInputData(data.build())
-//            .build()
-//        val workManager = WorkManager.getInstance(applicationContext)
-//        workManager.enqueue(myFirstWorkBuilder)
-//        if(days != null){
-//            currentWatering.text = days.toString() + " روز "
-//        }else{
-//            currentWatering.text = ""
-//        }
+        val db = DatabaseHelper(this)
+        val plant_name = plants_names?.get(plant_position)
+        val daysEditText: EditText = findViewById(R.id.watering_days)
+        val days: String = daysEditText.text.toString()
+        val currentWateringEditText: TextView = findViewById(R.id.currentWatering)
+        val calendar = Calendar.getInstance()
+        val date = calendar.time.time.toString()
+        db.addWatering(plant_name, date, days)
+        if(days != null){
+            currentWateringEditText.text = days + " روز "
+        }else{
+            currentWateringEditText.text = ""
+        }
     }
 
     fun removeFertilizerBtnClicked(view: View) {
@@ -199,37 +193,41 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     private fun updateCurrentWatering() {
-//        val db = FertilizerDatabaseHelper(this)
-//        val water = db.getWatering(intent.getStringExtra("plantName"))
-//        if(water.days != null){
-//            currentWatering.text = water.days + " روز "
-//        }else{
-//            currentWatering.text = ""
-//        }
-//        db.close()
+        val db = DatabaseHelper(this)
+        if(plants_names != null && plants_names!!.size > 0){
+            val plant_name = plants_names?.get(plant_position)
+            if(plant_name != null){
+                val wateringDays = db.getWateringDays(plant_name)
+                val CurrentWatering: TextView = findViewById(R.id.currentWatering)
+                if(wateringDays != "null"){
+                    CurrentWatering.text = wateringDays + " روز "
+                }
+                else{
+                    CurrentWatering.text = ""
+                }
+
+            }
+        }
+        db.close()
     }
 
     fun removeWateringBtnClicked(view: View) {
-        // cancel watering by getting the watering id of the plant from database
-//        val builder = AlertDialog.Builder(this)
-//        builder.setMessage("Are you sure you want to Delete Watering?")
-//            .setCancelable(false)
-//            .setPositiveButton("Yes") { dialog, id ->
-//                val plant_name = intent.getStringExtra("plantName")
-//                val db = FertilizerDatabaseHelper(this)
-//                val watering_id = db.getWateringId(plant_name)
-//                val wateringID = UUID.fromString(watering_id)
-//                WorkManager.getInstance(applicationContext).cancelWorkById(wateringID)
-//                db.removeWatering(plant_name)
-//                db.close()
-//                updateCurrentWatering()
-//            }
-//            .setNegativeButton("No") { dialog, id ->
-//                // Dismiss the dialog
-//                dialog.dismiss()
-//            }
-//        val alert = builder.create()
-//        alert.show()
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Are you sure you want to Delete Watering?")
+            .setCancelable(false)
+            .setPositiveButton("Yes") { dialog, id ->
+                val db = DatabaseHelper(this)
+                val plant_name = plants_names?.get(plant_position)
+                db.removeWatering(plant_name)
+                db.close()
+                updateCurrentWatering()
+            }
+            .setNegativeButton("No") { dialog, id ->
+                // Dismiss the dialog
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
     }
 
 

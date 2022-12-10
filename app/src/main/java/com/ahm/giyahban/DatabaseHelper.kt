@@ -88,6 +88,34 @@ class DatabaseHelper(context: Context?) :
         db.close()
     }
 
+    @Throws(SQLiteException::class)
+    fun addWatering(plantName: String?,date: String?, days: String?) {
+        val updateWateringQuery = "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$date', $KEY_PLANT_WATER_PERIOD = '$days' where $KEY_NAME = '$plantName';"
+        val db = this.writableDatabase
+        db.execSQL(updateWateringQuery)
+        db.close()
+    }
+
+    @Throws(SQLiteException::class)
+    fun getWateringDays(plantName: String?) : String? {
+        var days = ""
+        val plants = this.getPlants()
+        for(plant in plants){
+            if(plant.plant_name == plantName){
+                days = plant.water_period.toString()
+            }
+        }
+        return days
+    }
+
+    fun removeWatering(plantName: String?){
+        val db = this.writableDatabase
+        val updateWateringQuery = "update $DB_TABLE set $KEY_PLANT_WATER_DATE = NULL, $KEY_PLANT_WATER_PERIOD = NULL where $KEY_NAME = '$plantName';"
+        db.execSQL(updateWateringQuery)
+        db.close()
+    }
+
+
     @JvmName("getPlants1")
     fun getPlants(): MutableList<Plant> {
         val db = this.writableDatabase
