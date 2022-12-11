@@ -57,7 +57,7 @@
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="25dp"
-            android:onClick="delete_button_cliced"
+            android:onClick="delete_button_clicked"
             android:text="حذف"/>
     </RelativeLayout>
 </LinearLayout>
