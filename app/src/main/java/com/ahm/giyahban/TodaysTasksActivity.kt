@@ -29,8 +29,6 @@ class TodaysTasksActivity : AppCompatActivity() {
         val plant_names_list : MutableList<String> = mutableListOf()
         val plant_images_list : MutableList<Bitmap> = mutableListOf()
 
-
-        //plant_names_list.clear()
         if (plants.size > 0) {
             for (plant in plants) {
                 if(hasTask(plant)){
@@ -79,4 +77,5 @@ class TodaysTasksActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
         today = calendar.getTime().getTime()
     }
+
 }
