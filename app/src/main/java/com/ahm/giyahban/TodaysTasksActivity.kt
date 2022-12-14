@@ -11,8 +11,8 @@ class TodaysTasksActivity : AppCompatActivity() {
 
     var TasksList : ListView? = null
     var today: Long = 0
-    var water: Boolean = false
-    val fertilizerList : MutableList<String> = mutableListOf()
+    var water: MutableList<Boolean> = mutableListOf()
+    val fertilizerList : MutableList<MutableList<String>> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_todays_tasks)
@@ -53,17 +53,26 @@ class TodaysTasksActivity : AppCompatActivity() {
                 fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
             }
             var i = 0
+            val list: MutableList<String> = mutableListOf()
             for(ft in fertilizer_time_passed){
+
                 if(ft == plant.fertilizer_periods?.get(i)?.toInt()){
-                    fertilizerList.add(plant.fertilizers?.get(i) ?: "")
+                    list.add(plant.fertilizers?.get(i) ?: "")
+
                     result = true
                 }
-                i++
+                if(i < plant.fertilizer_periods!!.size - 2){
+                    i++
+                }
             }
+            fertilizerList.add(list)
         }
         if(watering_time_passed == plant.water_period!!.toInt()){
-            water = true
+            water.add(true)
             result = true
+        }
+        else {
+            water.add(false)
         }
         return result
     }

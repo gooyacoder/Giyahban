@@ -89,7 +89,7 @@
             android:layout_toLeftOf="@id/water_reminder_label"
             android:contentDescription="water today"
             android:visibility="invisible"
-            app:srcCompat="@drawable/img" />
+            app:srcCompat="@android:drawable/ic_menu_add" />
 
     </RelativeLayout>
 </LinearLayout>
