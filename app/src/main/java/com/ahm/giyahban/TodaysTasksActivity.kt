@@ -3,7 +3,9 @@ package com.ahm.giyahban
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.ListView
+import androidx.appcompat.app.AlertDialog
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -13,22 +15,19 @@ class TodaysTasksActivity : AppCompatActivity() {
     var today: Long = 0
     var water: MutableList<Boolean> = mutableListOf()
     val fertilizerList : MutableList<MutableList<String>> = mutableListOf()
+    val plant_names_list : MutableList<String> = mutableListOf()
+    val plant_images_list : MutableList<Bitmap> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_todays_tasks)
         prepareUI()
         getTodaysTasks()
-
     }
 
     private fun getTodaysTasks() {
         val db = DatabaseHelper(this)
         val plants = db.getPlants()
         db.close()
-
-        val plant_names_list : MutableList<String> = mutableListOf()
-        val plant_images_list : MutableList<Bitmap> = mutableListOf()
-
         if (plants.size > 0) {
             for (plant in plants) {
                 if(hasTask(plant)){
@@ -85,6 +84,51 @@ class TodaysTasksActivity : AppCompatActivity() {
         TasksList = findViewById(R.id.tasks_list)
         val calendar = Calendar.getInstance()
         today = calendar.getTime().getTime()
+    }
+
+    fun resetButtonClicked(view: View) {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Are you sure you want to reset Today's Tasks?")
+            .setCancelable(false)
+            .setPositiveButton("Yes") { dialog, id ->
+                resetTasks()
+            }
+            .setNegativeButton("No") { dialog, id ->
+                // Dismiss the dialog
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
+    }
+
+    private fun resetTasks() {
+        val db = DatabaseHelper(this)
+        val plants = db.getPlants()
+        var i = 0
+        for(plant in plant_names_list){
+            if(water[i]){
+                db.updatePlantWaterDate(plant, today)
+            }
+            if(fertilizerList[i].size > 0) {
+                val currentPlant = plants[i]
+                val updatedFertilizers = currentPlant.fertilizer_dates
+                val fertilizers = currentPlant.fertilizers
+                var j = 0
+                for(fert in fertilizerList[i]){
+                    if(fert == fertilizers!![j]){
+                        updatedFertilizers?.set(j, today.toString())
+                    }
+                    if(j < fertilizerList[i].size - 2){
+                        j++
+                    }
+                }
+                db.updatePlantFertilizerDates(plant, updatedFertilizers!!)
+            }
+            if(i < plant_names_list.size - 2){
+                i++
+            }
+        }
+        db.close()
     }
 
 }
