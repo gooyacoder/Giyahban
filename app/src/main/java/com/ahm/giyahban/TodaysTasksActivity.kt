@@ -48,25 +48,23 @@ class TodaysTasksActivity : AppCompatActivity() {
         var result = false
         val watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
         val fertilizer_time_passed : ArrayList<Int> = ArrayList()
-        if(plant.fertilizer_dates != null){
-            for (frt in plant.fertilizer_dates!!){
-                fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
-            }
-            var i = 0
-            val list: MutableList<String> = mutableListOf()
-            for(ft in fertilizer_time_passed){
 
-                if(ft == plant.fertilizer_periods?.get(i)?.toInt()){
-                    list.add(plant.fertilizers?.get(i) ?: "")
-
-                    result = true
-                }
-                if(i < plant.fertilizer_periods!!.size - 2){
-                    i++
-                }
-            }
-            fertilizerList.add(list)
+        for (frt in plant.fertilizer_dates!!){
+            fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
         }
+        var i = 0
+        val list: MutableList<String> = mutableListOf()
+        for(ft in fertilizer_time_passed){
+            if(ft == plant.fertilizer_periods!!.elementAt(i).toInt()){
+                list.add(plant.fertilizers!!.elementAt(i))
+
+                result = true
+            }
+            if(i < plant.fertilizer_periods?.size!! - 1){
+                i++
+            }
+        }
+        fertilizerList.add(list)
         if(watering_time_passed == plant.water_period!!.toInt()){
             water.add(true)
             result = true
