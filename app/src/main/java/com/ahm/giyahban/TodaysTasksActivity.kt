@@ -3,6 +3,7 @@ package com.ahm.giyahban
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ListView
 import android.widget.Toast
@@ -15,7 +16,7 @@ class TodaysTasksActivity : AppCompatActivity() {
     var TasksList : ListView? = null
     var today: Long = 0
     val water: MutableList<Boolean> = mutableListOf()
-    val fertilizerList : MutableList<MutableList<String>> = mutableListOf()
+    val fertilizerList : MutableList<MutableSet<String>> = mutableListOf()
     val plant_names_list : MutableList<String> = mutableListOf()
     val plant_images_list : MutableList<Bitmap> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +37,27 @@ class TodaysTasksActivity : AppCompatActivity() {
                     plant_images_list.add(plant_image)
                     val plant_name = plant.plant_name
                     plant_names_list.add(plant_name)
+                    val watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
+
+                    val fertilizer_time_passed : ArrayList<Int> = ArrayList()
+
+                    for (frt in plant.fertilizer_dates!!){
+                        fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
+                    }
+                    val list: MutableSet<String> = mutableSetOf()
+                    for( i in fertilizer_time_passed){
+                        if(plant.fertilizer_periods!!.contains(i.toString())){
+                            list.add(plant.fertilizers!!.elementAt(plant.fertilizer_periods!!.indexOf(i.toString())))
+                        }
+                    }
+                    fertilizerList.add(list)
+                    //Log.d(plant_name, plant.water_period!!.toString())
+                    if(plant.water_period!! == watering_time_passed){
+                        water.add(true)
+                    }
+                    else {
+                        water.add(false)
+                    }
 
                 }
             }
@@ -53,24 +75,16 @@ class TodaysTasksActivity : AppCompatActivity() {
             fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
         }
         var i = 0
-        val list: MutableList<String> = mutableListOf()
         for(ft in fertilizer_time_passed){
             if(ft == plant.fertilizer_periods!!.elementAt(i).toInt()){
-                list.add(plant.fertilizers!!.elementAt(i))
-
                 result = true
             }
-            if(i < plant.fertilizer_periods?.size!! - 1){
+            if(i < plant.fertilizer_periods.size - 1){
                 i++
             }
         }
-        fertilizerList.add(list)
         if(watering_time_passed == plant.water_period!!.toInt()){
-            water.add(true)
             result = true
-        }
-        else {
-            water.add(false)
         }
         return result
     }

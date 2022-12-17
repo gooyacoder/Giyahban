@@ -15,7 +15,7 @@ class CustomPlantList2(
     private val plantNames: MutableList<String>,
     private val plantImages: MutableList<Bitmap>,
     private val water: MutableList<Boolean>,
-    private val fertilizers: MutableList<MutableList<String>>) :
+    private val fertilizers: MutableList<MutableSet<String>>) :
     ArrayAdapter<String>(context, R.layout.row_item, plantNames) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var row = convertView
@@ -24,7 +24,6 @@ class CustomPlantList2(
         val textViewPlantName = row!!.findViewById<View>(R.id.textViewPlantName) as TextView
         val plantImage = row.findViewById<View>(R.id.imageViewPlant) as ImageView
         val wateringImage = row.findViewById<View>(R.id.watering_reminder_image) as ImageView
-        plantImage.setFocusable(false)
         if(water[position]){
             wateringImage.visibility = View.VISIBLE
         }
