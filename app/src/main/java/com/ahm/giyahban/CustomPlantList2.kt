@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 
@@ -23,10 +22,6 @@ class CustomPlantList2(
         if (convertView == null) row = inflater.inflate(R.layout.row_item, null, true)
         val textViewPlantName = row!!.findViewById<View>(R.id.textViewPlantName) as TextView
         val plantImage = row.findViewById<View>(R.id.imageViewPlant) as ImageView
-        val wateringImage = row.findViewById<View>(R.id.watering_reminder_image) as ImageView
-        if(water[position]){
-            wateringImage.visibility = View.VISIBLE
-        }
         textViewPlantName.text = plantNames[position]
         plantImage.setImageBitmap(plantImages[position])
         val fertilizerList = row.findViewById<View>(R.id.fertilizer_tasks_list) as TextView
@@ -37,4 +32,5 @@ class CustomPlantList2(
         fertilizerList.text = frt_list
         return row
     }
+
 }

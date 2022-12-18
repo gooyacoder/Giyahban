@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:divider="#000"
         android:dividerHeight="1dp"
-        android:layout_above="@id/resetButton"
+        android:layout_above="@id/wateringTextView"
         />
 
     <Button
@@ -26,5 +26,13 @@
         android:layout_alignParentBottom="true"
 
         />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/wateringTextView"
+        android:text=" آبیاری "
+        android:layout_above="@id/resetButton"
+         />
 
 </RelativeLayout>

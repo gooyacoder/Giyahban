@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
     <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="400dp"
-        android:layout_height="150dp"
+        android:layout_width="370dp"
+        android:layout_height="120dp"
         android:paddingLeft="3dp"
         android:paddingTop="3dp"
         android:paddingRight="0dp"
@@ -50,20 +50,13 @@
             android:textColor="#ccff00"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/water_reminder_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginRight="25dp"
-            android:layout_toLeftOf="@id/textViewPlantName"
-            android:text="آبیاری" />
+
 
         <TextView
             android:id="@+id/fertilizer_reminder_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/water_reminder_label"
+
             android:layout_marginTop="30dp"
             android:layout_marginRight="25dp"
             android:layout_toLeftOf="@id/textViewPlantName"
@@ -73,23 +66,14 @@
             android:id="@+id/fertilizer_tasks_list"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/water_reminder_label"
+
             android:layout_marginLeft="13dp"
             android:layout_marginTop="30dp"
             android:layout_marginRight="25dp"
             android:layout_toLeftOf="@id/fertilizer_reminder_label"
             android:text="لیست کودهای گیاه" />
 
-        <ImageView
-            android:id="@+id/watering_reminder_image"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@id/water_reminder_label"
-            android:contentDescription="water today"
-            android:visibility="invisible"
-            app:srcCompat="@android:drawable/ic_menu_add" />
+
 
     </RelativeLayout>
 </LinearLayout>

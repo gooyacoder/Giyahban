@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import java.util.*
@@ -38,9 +39,7 @@ class TodaysTasksActivity : AppCompatActivity() {
                     val plant_name = plant.plant_name
                     plant_names_list.add(plant_name)
                     val watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
-
                     val fertilizer_time_passed : ArrayList<Int> = ArrayList()
-
                     for (frt in plant.fertilizer_dates!!){
                         fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
                     }
@@ -51,7 +50,6 @@ class TodaysTasksActivity : AppCompatActivity() {
                         }
                     }
                     fertilizerList.add(list)
-                    //Log.d(plant_name, plant.water_period!!.toString())
                     if(plant.water_period!! == watering_time_passed){
                         water.add(true)
                     }
@@ -64,6 +62,16 @@ class TodaysTasksActivity : AppCompatActivity() {
         }
         val customPlantList = CustomPlantList2(this, plant_names_list, plant_images_list, water, fertilizerList)
         TasksList?.adapter = customPlantList
+        var plantsToWater = ""
+        water.forEachIndexed{i, w ->
+            if(w){
+                plantsToWater += plant_names_list[i] + ", "
+            }
+        }
+        //Toast.makeText(this, plantsToWater, Toast.LENGTH_LONG).show()
+        val waterTextView = findViewById<TextView>(R.id.wateringTextView)
+        waterTextView.setText(waterTextView.text.toString() + plantsToWater)
+
     }
 
     private fun hasTask(plant: Plant): Boolean {
