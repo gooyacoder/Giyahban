@@ -54,13 +54,11 @@ class TodaysTasksActivity : AppCompatActivity() {
                         }
                     }
                     fertilizerList.add(list)
-                    if(plant.water_period != null){
-                        if(plant.water_period!! == watering_time_passed){
-                            water.add(true)
-                        }
-                        else {
-                            water.add(false)
-                        }
+                    if(plant.water_period!! == watering_time_passed){
+                        water.add(true)
+                    }
+                    else {
+                        water.add(false)
                     }
                 }
             }
@@ -81,10 +79,7 @@ class TodaysTasksActivity : AppCompatActivity() {
 
     private fun hasTask(plant: Plant): Boolean {
         var result = false
-        var watering_time_passed = 0
-        if(plant.water_date != null){
-            val watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
-        }
+        val watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
         val fertilizer_time_passed : ArrayList<Int> = ArrayList()
 
         for (frt in plant.fertilizer_dates!!){
@@ -99,10 +94,8 @@ class TodaysTasksActivity : AppCompatActivity() {
                 i++
             }
         }
-        if(plant.water_period != null){
-            if(watering_time_passed == plant.water_period!!.toInt()){
-                result = true
-            }
+        if(watering_time_passed == plant.water_period!!.toInt()){
+            result = true
         }
         return result
     }
@@ -139,10 +132,8 @@ class TodaysTasksActivity : AppCompatActivity() {
         val plants = db.getPlants()
         var i = 0
         for(plant in plant_names_list){
-            if(water[i] != null){
-                if(water[i]){
-                    db.updatePlantWaterDate(plant, today)
-                }
+            if(water[i]){
+                db.updatePlantWaterDate(plant, today)
             }
             if(fertilizerList[i].size > 0) {
                 val currentPlant = plants[i]
