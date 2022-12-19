@@ -9,4 +9,5 @@
     android:gravity="right"
     android:textSize="10sp"
     android:textColor="#074"
+    android:paddingBottom="8dp"
     />

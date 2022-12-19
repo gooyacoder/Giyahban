@@ -22,7 +22,7 @@
             <Spinner
                 android:id="@+id/PlantsDropDownSpinner"
                 android:layout_width="200dp"
-                android:layout_height="37dp"
+                android:layout_height="43dp"
                 android:background="@android:drawable/btn_dropdown"
                 android:spinnerMode="dropdown" />
 
@@ -92,7 +92,7 @@
 
             <EditText
                 android:id="@+id/fertilizing_days"
-                android:layout_width="61dp"
+                android:layout_width="30dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="13dp"
                 android:textAlignment="center"
@@ -110,8 +110,8 @@
 
             <Spinner
                 android:id="@+id/fertilizerDropDownSpinner"
-                android:layout_width="140dp"
-                android:layout_height="37dp"
+                android:layout_width="130dp"
+                android:layout_height="43dp"
                 android:layout_marginLeft="13dp"
                 android:background="@android:drawable/btn_dropdown"
                 android:spinnerMode="dropdown" />

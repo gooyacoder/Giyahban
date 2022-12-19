@@ -133,20 +133,20 @@ class TodaysTasksActivity : AppCompatActivity() {
             }
             if(fertilizerList[i].size > 0) {
                 val currentPlant = plants[i]
-                val updatedFertilizers = currentPlant.fertilizer_dates
+                val updatedFertilizersDates = currentPlant.fertilizer_dates
                 val fertilizers = currentPlant.fertilizers
                 var j = 0
                 for(fert in fertilizerList[i]){
                     if(fert == fertilizers!![j]){
-                        updatedFertilizers?.set(j, today.toString())
+                        updatedFertilizersDates!![j] = today.toString()
                     }
-                    if(j < fertilizerList[i].size - 2){
+                    if(j < fertilizerList[i].size - 1){
                         j++
                     }
                 }
-                db.updatePlantFertilizerDates(plant, updatedFertilizers!!)
+                db.updatePlantFertilizerDates(plant, updatedFertilizersDates!!)
             }
-            if(i < plant_names_list.size - 2){
+            if(i < plant_names_list.size - 1){
                 i++
             }
         }

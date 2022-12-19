@@ -191,7 +191,7 @@ class DatabaseHelper(context: Context?) :
     fun updatePlantFertilizerDates(name: String, fertilizer_dates: ArrayList<String> ) {
         var update_query = ""
         val fertilizer_dates_string = convertArrayToString(fertilizer_dates)
-        update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZER_DATES = '$fertilizer_dates_string' where $KEY_NAME = '$name;'"
+        update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZER_DATES = '$fertilizer_dates_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
