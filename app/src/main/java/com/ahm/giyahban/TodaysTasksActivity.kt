@@ -38,7 +38,11 @@ class TodaysTasksActivity : AppCompatActivity() {
                     plant_images_list.add(plant_image)
                     val plant_name = plant.plant_name
                     plant_names_list.add(plant_name)
-                    val watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
+                    var watering_time_passed = 0
+                    if(plant.water_date != null){
+                        watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
+                    }
+
                     val fertilizer_time_passed : ArrayList<Int> = ArrayList()
                     for (frt in plant.fertilizer_dates!!){
                         fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
@@ -50,13 +54,14 @@ class TodaysTasksActivity : AppCompatActivity() {
                         }
                     }
                     fertilizerList.add(list)
-                    if(plant.water_period!! == watering_time_passed){
-                        water.add(true)
+                    if(plant.water_period != null){
+                        if(plant.water_period!! == watering_time_passed){
+                            water.add(true)
+                        }
+                        else {
+                            water.add(false)
+                        }
                     }
-                    else {
-                        water.add(false)
-                    }
-
                 }
             }
         }
@@ -118,6 +123,7 @@ class TodaysTasksActivity : AppCompatActivity() {
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
                 resetTasks()
+                Toast.makeText(this, "Tasks Reset Successfully.", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("No") { dialog, id ->
                 // Dismiss the dialog
@@ -125,7 +131,7 @@ class TodaysTasksActivity : AppCompatActivity() {
             }
         val alert = builder.create()
         alert.show()
-        Toast.makeText(this, "Tasks Reset Successfully.", Toast.LENGTH_LONG).show()
+
     }
 
     private fun resetTasks() {
@@ -133,8 +139,10 @@ class TodaysTasksActivity : AppCompatActivity() {
         val plants = db.getPlants()
         var i = 0
         for(plant in plant_names_list){
-            if(water[i]){
-                db.updatePlantWaterDate(plant, today)
+            if(water[i] != null){
+                if(water[i]){
+                    db.updatePlantWaterDate(plant, today)
+                }
             }
             if(fertilizerList[i].size > 0) {
                 val currentPlant = plants[i]
