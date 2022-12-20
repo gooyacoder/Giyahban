@@ -125,6 +125,13 @@ class TodaysTasksActivity : AppCompatActivity() {
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
                 resetTasks()
+                water.clear()
+                fertilizerList.clear()
+                plant_names_list.clear()
+                plant_images_list.clear()
+                val waterTextView = findViewById<TextView>(R.id.wateringTextView)
+                waterTextView.setText("")
+                getTodaysTasks()
                 Toast.makeText(this, "Tasks Reset Successfully.", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("No") { dialog, id ->
