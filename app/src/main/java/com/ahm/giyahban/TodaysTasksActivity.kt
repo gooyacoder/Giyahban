@@ -30,7 +30,7 @@ class TodaysTasksActivity : AppCompatActivity() {
     private fun getTodaysTasks() {
         val db = DatabaseHelper(this)
         val plants = db.getPlants()
-        db.close()
+
         if (plants.size > 0) {
             for (plant in plants) {
                 if(hasTask(plant)){
@@ -38,19 +38,18 @@ class TodaysTasksActivity : AppCompatActivity() {
                     plant_images_list.add(plant_image)
                     val plant_name = plant.plant_name
                     plant_names_list.add(plant_name)
-                    var watering_time_passed = 0
-                    if(plant.water_date != null){
-                        watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
-                    }
-
+                    val watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
                     val fertilizer_time_passed : ArrayList<Int> = ArrayList()
-                    for (frt in plant.fertilizer_dates!!){
+                    val fert_dates = db.getFertilizerDates(plant.plant_name)
+                    for (frt in fert_dates!!){
                         fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
                     }
                     val list: MutableSet<String> = mutableSetOf()
-                    for( i in fertilizer_time_passed){
-                        if(plant.fertilizer_periods!!.contains(i.toString())){
-                            list.add(plant.fertilizers!!.elementAt(plant.fertilizer_periods!!.indexOf(i.toString())))
+                    val fert_names = db.getFertilizersNames(plant.plant_name)
+                    val fert_periods = db.getFertilizerPeriodsArrayList(plant.plant_name)
+                    for(fertNameIndex in fert_names!!.indices){
+                        if(fert_periods!![fertNameIndex].toInt() == fertilizer_time_passed[fertNameIndex]){
+                            list.add(fert_names[fertNameIndex])
                         }
                     }
                     fertilizerList.add(list)
@@ -74,29 +73,39 @@ class TodaysTasksActivity : AppCompatActivity() {
         //Toast.makeText(this, plantsToWater, Toast.LENGTH_LONG).show()
         val waterTextView = findViewById<TextView>(R.id.wateringTextView)
         waterTextView.setText(waterTextView.text.toString() + plantsToWater)
-
+        db.close()
     }
 
     private fun hasTask(plant: Plant): Boolean {
+        val db = DatabaseHelper(this)
         var result = false
-        val watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
-        val fertilizer_time_passed : ArrayList<Int> = ArrayList()
-
-        for (frt in plant.fertilizer_dates!!){
-            fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
-        }
-        var i = 0
-        for(ft in fertilizer_time_passed){
-            if(ft == plant.fertilizer_periods!!.elementAt(i).toInt()){
+        if(plant.water_date != null){
+            val watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
+            if(watering_time_passed == plant.water_period!!.toInt()){
                 result = true
             }
-            if(i < plant.fertilizer_periods.size - 1){
+        }
+
+        val fertilizer_time_passed : ArrayList<Int> = ArrayList()
+
+        val fert_dates = db.getFertilizerDates(plant.plant_name)
+        val fert_periods = db.getFertilizerPeriodsArrayList(plant.plant_name)
+        if(fert_dates != null){
+            for (frt in fert_dates){
+                fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
+            }
+            var i = 0
+            for(ft in fertilizer_time_passed){
+                if(i < fert_periods!!.size){
+                    if(ft == fert_periods!![i].toInt()){
+                        result = true
+                    }
+                }
                 i++
             }
         }
-        if(watering_time_passed == plant.water_period!!.toInt()){
-            result = true
-        }
+
+        db.close()
         return result
     }
 

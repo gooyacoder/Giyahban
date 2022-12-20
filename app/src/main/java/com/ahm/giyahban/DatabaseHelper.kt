@@ -258,15 +258,15 @@ class DatabaseHelper(context: Context?) :
         val db = this.writableDatabase
         val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
         val cursor = db.rawQuery(query, null)
-        var fertilizers: ArrayList<String>? = ArrayList<String>()
+        var fertilizersNames: ArrayList<String>? = ArrayList<String>()
         if (cursor.moveToNext()) {
             if(cursor.getString(4) != null){
-                fertilizers = convertArrayToArrayList(convertStringToArray(cursor.getString(4)))
+                fertilizersNames = convertArrayToArrayList(convertStringToArray(cursor.getString(4)))
             }
         }
         cursor.close()
         db.close()
-        return fertilizers
+        return fertilizersNames
     }
 
     fun getFertilizerPeriodsArrayList(name: String?): ArrayList<String>? {
@@ -282,6 +282,21 @@ class DatabaseHelper(context: Context?) :
         cursor.close()
         db.close()
         return fertilizerPeriodsArrayList
+    }
+
+    fun getFertilizerDates(name: String?): ArrayList<String>? {
+        val db = this.writableDatabase
+        val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
+        val cursor = db.rawQuery(query, null)
+        var fertilizerDatesArrayList: ArrayList<String>? = ArrayList<String>()
+        if (cursor.moveToNext()) {
+            if(cursor.getString(5) != null){
+                fertilizerDatesArrayList = convertArrayToArrayList(convertStringToArray(cursor.getString(5)))
+            }
+        }
+        cursor.close()
+        db.close()
+        return fertilizerDatesArrayList
     }
 
 }
