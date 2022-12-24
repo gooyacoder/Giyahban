@@ -116,6 +116,7 @@ class TodaysTasksActivity : AppCompatActivity() {
     private fun prepareUI() {
         TasksList = findViewById(R.id.tasks_list)
         val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 8)
         today = calendar.getTime().getTime()
     }
 
