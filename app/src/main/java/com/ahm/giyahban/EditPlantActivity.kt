@@ -106,7 +106,7 @@ class EditPlantActivity : AppCompatActivity() {
         val days: String = fertilizing_days?.text.toString()
         fertilizerPeriodsArrayList?.add(days)
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 8)
+        calendar.set(Calendar.HOUR_OF_DAY, 5)
         val today = calendar.time.time.toString()
         fertilizerDatesArrayList?.add(today)
 
@@ -126,7 +126,7 @@ class EditPlantActivity : AppCompatActivity() {
         daysEditText.setText("")
         val currentWateringEditText: TextView = findViewById(R.id.currentWatering)
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 8)
+        calendar.set(Calendar.HOUR_OF_DAY, 5)
         val date = calendar.time.time.toString()
         db.addWatering(plant_name, date, days)
         if(days != null){
