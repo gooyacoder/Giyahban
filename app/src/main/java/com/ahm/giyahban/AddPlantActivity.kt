@@ -48,11 +48,14 @@ class AddPlantActivity : AppCompatActivity() {
             var db = DatabaseHelper(this)
 
             var plant_name:String = name_text.text.toString()
-            db.addEntry(plant_name, image_byte_array!!)
-            db.close()
-            Toast.makeText(this, "$plant_name added to database, successfully.", Toast.LENGTH_LONG).show()
-            finish()
+            val result = db.addEntry(plant_name, image_byte_array!!)
+            if(result.toInt() == -1){
+                Toast.makeText(this, "Try another plant name.", Toast.LENGTH_LONG).show()
+            }else{
+                db.close()
+                Toast.makeText(this, "$plant_name added to database, successfully.", Toast.LENGTH_LONG).show()
+                finish()
+            }
         }
-
     }
 }

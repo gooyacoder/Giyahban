@@ -59,14 +59,14 @@ class DatabaseHelper(context: Context?) :
     }
 
     @Throws(SQLiteException::class)
-    fun addEntry(name: String,
-                 image: ByteArray ) {
+    fun addEntry(name: String, image: ByteArray ) : Long {
         val database = this.writableDatabase
         val cv = ContentValues()
         cv.put(KEY_NAME, name)
         cv.put(KEY_IMAGE, image)
-        database.insert(DB_TABLE, null, cv) // returns -1 if insert fails, show message that the plant name exists.
+        val result = database.insert(DB_TABLE, null, cv) // returns -1 if insert fails, show message that the plant name exists.
         database.close()
+        return result
     }
 
 

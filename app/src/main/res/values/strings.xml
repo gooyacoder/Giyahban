@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Giyahban 1.0.1</string>
+    <string name="app_name">Giyahban 1.0.2</string>
     <string name="add">افزودن گیاه جدید</string>
     <string name="take_a_picture">عکس</string>
     <string name="plant_data">Plant Data</string>
@@ -15,7 +15,6 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="test_edit_plant_activity">Test Edit Plant Activity</string>
