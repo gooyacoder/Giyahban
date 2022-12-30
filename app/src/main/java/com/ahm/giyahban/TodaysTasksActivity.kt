@@ -118,6 +118,8 @@ class TodaysTasksActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 5)
         calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
         today = calendar.getTime().getTime()
     }
 

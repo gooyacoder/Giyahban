@@ -108,6 +108,8 @@ class EditPlantActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 5)
         calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
         val today = calendar.time.time.toString()
         fertilizerDatesArrayList?.add(today)
 
@@ -129,6 +131,8 @@ class EditPlantActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 5)
         calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
         val date = calendar.time.time.toString()
         db.addWatering(plant_name, date, days)
         if(days != null){
