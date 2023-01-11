@@ -48,15 +48,13 @@ class TodaysTasksActivity : AppCompatActivity() {
                             fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
                     }
                     val list: MutableSet<String> = mutableSetOf()
-                    val fert_names = db.getFertilizersNames(plant.plant_name)
-                    val fert_periods = db.getFertilizerPeriodsArrayList(plant.plant_name)
+                    val fertilizers = db.getFertilizersArrayList(plant.plant_name)
 
-                    for(fertNameIndex in fert_names!!.indices){
-                        if(fert_periods!![fertNameIndex] == ""){
-                            continue
-                        }
-                        if(fert_periods!![fertNameIndex].toInt() == fertilizer_time_passed[fertNameIndex]){
-                            list.add(fert_names[fertNameIndex])
+
+                    for(fertNameIndex in fertilizers!!.indices){
+
+                        if(fertilizers!![fertNameIndex].period == fertilizer_time_passed[fertNameIndex]){
+                            list.add(fertilizers!![fertNameIndex].name)
                         }
 
                     }
@@ -97,21 +95,16 @@ class TodaysTasksActivity : AppCompatActivity() {
 
         val fertilizer_time_passed : ArrayList<Int> = ArrayList()
 
-        val fert_dates = db.getFertilizerDates(plant.plant_name)
-        val fert_periods = db.getFertilizerPeriodsArrayList(plant.plant_name)
-        if(fert_dates != null){
-            for (frt in fert_dates){
-                if(frt.isNotEmpty()){
-                    fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
-                }
+        val fertilizers = db.getFertilizersArrayList(plant.plant_name)
 
+        if(fertilizers != null){
+            for (frt in fertilizers){
+                fertilizer_time_passed.add(calculateDays(today - frt.date))
             }
             var i = 0
             for(ft in fertilizer_time_passed){
-                if(i < fert_periods!!.size && fert_periods!![i].isNotEmpty()){
-                    if(ft == fert_periods!![i].toInt()){
-                        result = true
-                    }
+                if(ft == fertilizers!![i].period){
+                    result = true
                 }
                 i++
             }
@@ -140,7 +133,7 @@ class TodaysTasksActivity : AppCompatActivity() {
         builder.setMessage("Are you sure you want to reset Today's Tasks?")
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
-                resetTasks()
+                //resetTasks()
                 water.clear()
                 fertilizerList.clear()
                 plant_names_list.clear()
@@ -159,7 +152,7 @@ class TodaysTasksActivity : AppCompatActivity() {
 
     }
 
-    private fun resetTasks() {
+   /* private fun resetTasks() {
         val db = DatabaseHelper(this)
         val plants = db.getPlants()
         var i = 0
@@ -187,7 +180,7 @@ class TodaysTasksActivity : AppCompatActivity() {
             }
         }
         db.close()
-    }
+    }*/
 
     /*fun makebyte(modeldata: Dataobject?): ByteArray? {
         try {

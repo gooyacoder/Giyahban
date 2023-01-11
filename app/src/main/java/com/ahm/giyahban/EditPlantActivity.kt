@@ -8,6 +8,10 @@ import android.widget.*
 import android.widget.AbsListView.CHOICE_MODE_SINGLE
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.ObjectOutputStream
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -21,9 +25,9 @@ class EditPlantActivity : AppCompatActivity() {
     var fertilizer_list: ListView? = null
     var fertilizerDropDownSpinner: Spinner? = null
     var fertilizing_days: EditText? = null
-    var fertilizerDatesArrayList: ArrayList<String>? = null
-    var fertilizerPeriodsArrayList: ArrayList<String>? = null
-    var fertilizersArrayList: ArrayList<String>? = null
+    //var fertilizerDatesArrayList: ArrayList<String>? = null
+    //var fertilizerPeriodsArrayList: ArrayList<String>? = null
+    var fertilizersArrayList: ArrayList<Fertilizer>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +44,7 @@ class EditPlantActivity : AppCompatActivity() {
         namesDropDownSpinner = findViewById(R.id.PlantsDropDownSpinner)
         fertilizerDropDownSpinner = findViewById(R.id.fertilizerDropDownSpinner)
         fertilizing_days = findViewById(R.id.fertilizing_days)
-        fertilizerDatesArrayList = ArrayList()
         fertilizersArrayList = ArrayList()
-        fertilizerPeriodsArrayList = ArrayList()
         namesDropDownSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 plant_position = position
@@ -100,25 +102,35 @@ class EditPlantActivity : AppCompatActivity() {
         val db = DatabaseHelper(this)
         val plant_name = plants_names?.get(plant_position)
         val fertilizer_name = fertilizerDropDownSpinner?.selectedItem.toString()
-        fertilizersArrayList = db.getFertilizersNames(plant_name)
-        fertilizerPeriodsArrayList = db.getFertilizerPeriodsArrayList(plant_name)
-        fertilizersArrayList?.add(fertilizer_name)
-        val days: String = fertilizing_days?.text.toString()
-        fertilizerPeriodsArrayList?.add(days)
+        fertilizersArrayList = db.getFertilizersArrayList(plant_name)
+        val days = fertilizing_days?.text.toString().toInt()
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 5)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
-        val today = calendar.time.time.toString()
-        fertilizerDatesArrayList?.add(today)
-
-        db.addFertilizer(plant_name, convertArrayToString(fertilizersArrayList),
-            convertArrayToString(fertilizerDatesArrayList), convertArrayToString(fertilizerPeriodsArrayList))
+        val today = calendar.time.time
+        val newFertilizer = Fertilizer(fertilizer_name, today, days)
+        fertilizersArrayList?.add(newFertilizer)
+        db.addFertilizer(plant_name, makebyte(fertilizersArrayList))
         db.close()
         updateFertilizerList()
         val fertilizingEditText : EditText = findViewById(R.id.fertilizing_days)
         fertilizingEditText.setText("")
+    }
+
+    fun makebyte(modeldata: ArrayList<Fertilizer>?): ByteArray? {
+        try {
+            val baos = ByteArrayOutputStream()
+            val oos = ObjectOutputStream(baos)
+            oos.writeObject(modeldata)
+            val employeeAsBytes: ByteArray = baos.toByteArray()
+            val bais = ByteArrayInputStream(employeeAsBytes)
+            return employeeAsBytes
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     fun wateringBtnClicked(view: View) {
@@ -142,7 +154,7 @@ class EditPlantActivity : AppCompatActivity() {
         }
     }
 
-    fun removeFertilizerBtnClicked(view: View) {
+    /*fun removeFertilizerBtnClicked(view: View) {
         val builder = AlertDialog.Builder(this)
         builder.setMessage("Are you sure you want to Delete Fertilizer?")
             .setCancelable(false)
@@ -174,7 +186,7 @@ class EditPlantActivity : AppCompatActivity() {
         val alert = builder.create()
         alert.show()
 
-    }
+    }*/
 
     private fun updateFertilizerList() {
         if(plants_names?.size!! > 0){
