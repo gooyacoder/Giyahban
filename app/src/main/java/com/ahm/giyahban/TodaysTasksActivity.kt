@@ -1,16 +1,15 @@
 package com.ahm.giyahban
 
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import java.io.*
 import java.util.*
-import kotlin.collections.HashMap
 
 class TodaysTasksActivity : AppCompatActivity() {
 
@@ -38,25 +37,35 @@ class TodaysTasksActivity : AppCompatActivity() {
                     plant_images_list.add(plant_image)
                     val plant_name = plant.plant_name
                     plant_names_list.add(plant_name)
-                    val watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
+                    var watering_time_passed: Int = 0
+                    if(plant.water_date != null){
+                        watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
+                    }
                     val fertilizer_time_passed : ArrayList<Int> = ArrayList()
                     val fert_dates = db.getFertilizerDates(plant.plant_name)
                     for (frt in fert_dates!!){
-                        fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
+                        if(frt.isNotEmpty())
+                            fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
                     }
                     val list: MutableSet<String> = mutableSetOf()
                     val fert_names = db.getFertilizersNames(plant.plant_name)
                     val fert_periods = db.getFertilizerPeriodsArrayList(plant.plant_name)
+
                     for(fertNameIndex in fert_names!!.indices){
+                        if(fert_periods!![fertNameIndex] == ""){
+                            continue
+                        }
                         if(fert_periods!![fertNameIndex].toInt() == fertilizer_time_passed[fertNameIndex]){
                             list.add(fert_names[fertNameIndex])
                         }
+
                     }
                     fertilizerList.add(list)
-                    if(plant.water_period!! == watering_time_passed){
-                        water.add(true)
-                    }
-                    else {
+                    if(plant.water_date != null){
+                        if(plant.water_period!! == watering_time_passed){
+                            water.add(true)
+                        }
+                    }else {
                         water.add(false)
                     }
                 }
@@ -92,11 +101,14 @@ class TodaysTasksActivity : AppCompatActivity() {
         val fert_periods = db.getFertilizerPeriodsArrayList(plant.plant_name)
         if(fert_dates != null){
             for (frt in fert_dates){
-                fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
+                if(frt.isNotEmpty()){
+                    fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
+                }
+
             }
             var i = 0
             for(ft in fertilizer_time_passed){
-                if(i < fert_periods!!.size){
+                if(i < fert_periods!!.size && fert_periods!![i].isNotEmpty()){
                     if(ft == fert_periods!![i].toInt()){
                         result = true
                     }
@@ -176,5 +188,34 @@ class TodaysTasksActivity : AppCompatActivity() {
         }
         db.close()
     }
+
+    /*fun makebyte(modeldata: Dataobject?): ByteArray? {
+        try {
+            val baos = ByteArrayOutputStream()
+            val oos = ObjectOutputStream(baos)
+            oos.writeObject(modeldata)
+            val employeeAsBytes: ByteArray = baos.toByteArray()
+            val bais = ByteArrayInputStream(employeeAsBytes)
+            return employeeAsBytes
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+
+    fun read(data: ByteArray?): Dataobject? {
+        try {
+            val baip = ByteArrayInputStream(data)
+            val ois = ObjectInputStream(baip)
+            return ois.readObject() as Dataobject
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: ClassNotFoundException) {
+            e.printStackTrace()
+        }
+        return null
+    }*/
+
 
 }

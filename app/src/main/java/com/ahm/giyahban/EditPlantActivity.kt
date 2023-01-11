@@ -152,16 +152,17 @@ class EditPlantActivity : AppCompatActivity() {
                 val fertilizer_row = fertilizer_list?.adapter?.
                 getItem(fertilizer_list!!.checkedItemPosition)
                     .toString()
-                val fertilizer_name = ""
+
                 val text = fertilizer_row.split(':')
-
-
                 val fertilizersNamesArrayList = db.getFertilizersNames(plant_name)
                 val index = fertilizersNamesArrayList?.indexOf(text[0].trim())
-                fertilizersNamesArrayList?.remove(text[0].trim())
+                fertilizersNamesArrayList?.clear()
                 val fertilizerPeriodsArrayList = db.getFertilizerPeriodsArrayList(plant_name)
-                fertilizerPeriodsArrayList?.removeAt(index!!)
+                fertilizerPeriodsArrayList?.clear()
+                val dates = db.getFertilizerDates(plant_name)
+                dates?.clear()
                 db.removeFertilizer(plant_name, convertArrayToString(fertilizersNamesArrayList),
+                                        convertArrayToString(dates),
                                         convertArrayToString(fertilizerPeriodsArrayList))
                 db.close()
                 updateFertilizerList()

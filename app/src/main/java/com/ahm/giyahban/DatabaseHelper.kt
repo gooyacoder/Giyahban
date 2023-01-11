@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import java.io.*
 
 
 class DatabaseHelper(context: Context?) :
@@ -43,8 +44,7 @@ class DatabaseHelper(context: Context?) :
         private const val KEY_PLANT_WATER_DATE = "plant_water_date"
         private const val KEY_PLANT_WATER_PERIOD = "plant_water_period"
         private const val KEY_PLANT_FERTILIZERS = "plant_fertilizers"
-        private const val KEY_PLANT_FERTILIZER_DATES = "plant_fertilizer_dates"
-        private const val KEY_PLANT_FERTILIZER_PERIODS = "plant_fertilizer_periods"
+
 
         // Table create statement
         private const val CREATE_TABLE_PLANT = "CREATE TABLE " + DB_TABLE + "(" +
@@ -52,9 +52,7 @@ class DatabaseHelper(context: Context?) :
                 KEY_IMAGE + " BLOB," +
                 KEY_PLANT_WATER_DATE + " TEXT," +
                 KEY_PLANT_WATER_PERIOD + " TEXT," +
-                KEY_PLANT_FERTILIZERS + " TEXT," +
-                KEY_PLANT_FERTILIZER_DATES + " TEXT," +
-                KEY_PLANT_FERTILIZER_PERIODS + " TEXT);"
+                KEY_PLANT_FERTILIZERS + " BLOB;"
 
     }
 
@@ -73,17 +71,15 @@ class DatabaseHelper(context: Context?) :
     @Throws(SQLiteException::class)
     fun addFertilizer(plantName: String?,fertilizerNames: String?,
                       fertilizerDates: String? ,fertilizerPeriods: String?) {
-        val updateFertilizerQuery = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizerNames', " +
-                "$KEY_PLANT_FERTILIZER_DATES = '$fertilizerDates', $KEY_PLANT_FERTILIZER_PERIODS = '$fertilizerPeriods' where $KEY_NAME = '$plantName';"
+        val updateFertilizerQuery = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizerNames' where $KEY_NAME = '$plantName';"
         val db = this.writableDatabase
         db.execSQL(updateFertilizerQuery)
         db.close()
     }
 
-    fun removeFertilizer(plantName: String?, fertilizersArrayList: String?, fertilizerPeriodsArrayList: String?){
+    fun removeFertilizer(plantName: String?, fertilizersArrayList: String?, dates: String?, fertilizerPeriodsArrayList: String?){
         val db = this.writableDatabase
-        val updateFertilizerQuery = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizersArrayList'," +
-                " $KEY_PLANT_FERTILIZER_PERIODS = '$fertilizerPeriodsArrayList' where $KEY_NAME = '$plantName';"
+        val updateFertilizerQuery = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizersArrayList' where $KEY_NAME = '$plantName';"
         db.execSQL(updateFertilizerQuery)
         db.close()
     }
@@ -127,16 +123,15 @@ class DatabaseHelper(context: Context?) :
             val water_date = cursor.getString(2)
             val water_period = cursor.getString(3)
             val fertilizers = cursor.getString(4)
-            val fertilizer_dates = cursor.getString(5)
-            val fertilizer_periods = cursor.getString(6)
-            val plant = Plant(name,
-                imagebyte,
-                if(water_date != null) water_date.toLong() else null,
-                if(water_period != null) water_period.toInt() else null,
-                if(fertilizers != null) convertArrayToArrayList(convertStringToArray(fertilizers)) else null,
-                if(fertilizer_dates != null) convertArrayToArrayList(convertStringToArray(fertilizer_dates)) else null,
-                if(fertilizer_periods != null) convertArrayToArrayList(convertStringToArray(fertilizer_periods)) else null)
-            plants.add(plant)
+
+            // read bytearray
+
+//            val plant = Plant(name,
+//                imagebyte,
+//                if(water_date != null) water_date.toLong() else null,
+//                if(water_period != null) water_period.toInt() else null,
+//                if(fertilizers != null) convertArrayToArrayList(convertStringToArray(fertilizers)) else null)
+//            plants.add(plant)
         }
         cursor.close()
         db.close()
@@ -181,57 +176,45 @@ class DatabaseHelper(context: Context?) :
 
     fun updatePlantFertilizers(name: String, fertilizers: ArrayList<String>) {
         var update_query = ""
-        val fertilizers_string = convertArrayToString(fertilizers)
-        update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers_string' where $KEY_NAME = '$name';"
+        //val fertilizers_string = convertArrayToString(fertilizers)
+
+
+        //convert object to bytearray
+
+
+        //update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
     }
 
-    fun updatePlantFertilizerDates(name: String, fertilizer_dates: ArrayList<String> ) {
-        var update_query = ""
-        val fertilizer_dates_string = convertArrayToString(fertilizer_dates)
-        update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZER_DATES = '$fertilizer_dates_string' where $KEY_NAME = '$name';"
-        val db = this.writableDatabase
-        db.execSQL(update_query)
-        db.close()
-    }
 
-    fun updatePlantFertilizerPeriods(name: String, fertilizer_periods: ArrayList<String>) {
-        var update_query = ""
-        val fertilizer_periods_string = convertArrayToString(fertilizer_periods)
-        update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZER_PERIODS = '$fertilizer_periods_string' where $KEY_NAME = '$name';"
-        val db = this.writableDatabase
-        db.execSQL(update_query)
-        db.close()
-    }
-
-    fun convertArrayToString(array: ArrayList<String>?): String? {
-        val strSeparator = "__,__"
-        var str = ""
-        if(array != null){
-            for (i in array.indices) {
-                str = str + array[i]
-                // Do not append comma at the end of last element
-                if (i < array.size - 1) {
-                    str = str + strSeparator
-                }
-            }
-        }
-        return str
-    }
-
-    fun convertStringToArray(str: String): Array<String>? {
-        val strSeparator = "__,__"
-        return str.split(strSeparator).toTypedArray()
-    }
-    fun convertArrayToArrayList(array_data: Array<String>?): ArrayList<String>? {
-        val arrayList: ArrayList<String> = ArrayList<String>()
-        for (i in array_data!!){
-            arrayList.add(i)
-        }
-        return arrayList
-    }
+//    fun convertArrayToString(array: ArrayList<String>?): String? {
+//        val strSeparator = "__,__"
+//        var str = ""
+//        if(array != null){
+//            for (i in array.indices) {
+//                str = str + array[i]
+//                // Do not append comma at the end of last element
+//                if (i < array.size - 1) {
+//                    str = str + strSeparator
+//                }
+//            }
+//        }
+//        return str
+//    }
+//
+//    fun convertStringToArray(str: String): Array<String>? {
+//        val strSeparator = "__,__"
+//        return str.split(strSeparator).toTypedArray()
+//    }
+//    fun convertArrayToArrayList(array_data: Array<String>?): ArrayList<String>? {
+//        val arrayList: ArrayList<String> = ArrayList<String>()
+//        for (i in array_data!!){
+//            arrayList.add(i)
+//        }
+//        return arrayList
+//    }
 
     @JvmName("getFertilizers1")
     fun getFertilizers(name: String?): MutableMap<ArrayList<String>? , ArrayList<String>?>? {
@@ -240,12 +223,14 @@ class DatabaseHelper(context: Context?) :
         val cursor = db.rawQuery(query, null)
         var fertilizers: ArrayList<String>? = ArrayList<String>()
         var fertilizers_periods: ArrayList<String>? = ArrayList<String>()
-        if (cursor.moveToNext()) {
-            if(cursor.getString(4) != null && cursor.getString(5) != null){
-                fertilizers = convertArrayToArrayList(convertStringToArray(cursor.getString(4)))
-                fertilizers_periods = convertArrayToArrayList(convertStringToArray(cursor.getString(6)))
-            }
-        }
+        // read bytearray
+
+//        if (cursor.moveToNext()) {
+//            if(cursor.getString(4) != null && cursor.getString(5) != null){
+//                fertilizers = convertArrayToArrayList(convertStringToArray(cursor.getString(4)))
+//                fertilizers_periods = convertArrayToArrayList(convertStringToArray(cursor.getString(6)))
+//            }
+//        }
         cursor.close()
         db.close()
         val result : MutableMap<ArrayList<String>? , ArrayList<String>?>? = HashMap()
@@ -259,11 +244,15 @@ class DatabaseHelper(context: Context?) :
         val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
         val cursor = db.rawQuery(query, null)
         var fertilizersNames: ArrayList<String>? = ArrayList<String>()
-        if (cursor.moveToNext()) {
-            if(cursor.getString(4) != null){
-                fertilizersNames = convertArrayToArrayList(convertStringToArray(cursor.getString(4)))
-            }
-        }
+        //read bytearray
+
+
+
+//        if (cursor.moveToNext()) {
+//            if(cursor.getString(4) != null){
+//                fertilizersNames = convertArrayToArrayList(convertStringToArray(cursor.getString(4)))
+//            }
+//        }
         cursor.close()
         db.close()
         return fertilizersNames
@@ -274,11 +263,15 @@ class DatabaseHelper(context: Context?) :
         val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
         val cursor = db.rawQuery(query, null)
         var fertilizerPeriodsArrayList: ArrayList<String>? = ArrayList<String>()
-        if (cursor.moveToNext()) {
-            if(cursor.getString(6) != null){
-                fertilizerPeriodsArrayList = convertArrayToArrayList(convertStringToArray(cursor.getString(6)))
-            }
-        }
+        // read bytearray
+
+
+
+//        if (cursor.moveToNext()) {
+//            if(cursor.getString(6) != null){
+//                fertilizerPeriodsArrayList = convertArrayToArrayList(convertStringToArray(cursor.getString(6)))
+//            }
+//        }
         cursor.close()
         db.close()
         return fertilizerPeriodsArrayList
@@ -289,14 +282,47 @@ class DatabaseHelper(context: Context?) :
         val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
         val cursor = db.rawQuery(query, null)
         var fertilizerDatesArrayList: ArrayList<String>? = ArrayList<String>()
-        if (cursor.moveToNext()) {
-            if(cursor.getString(5) != null){
-                fertilizerDatesArrayList = convertArrayToArrayList(convertStringToArray(cursor.getString(5)))
-            }
-        }
+        //read bytearray
+
+
+
+//        if (cursor.moveToNext()) {
+//            if(cursor.getString(5) != null){
+//                fertilizerDatesArrayList = convertArrayToArrayList(convertStringToArray(cursor.getString(5)))
+//            }
+//        }
         cursor.close()
         db.close()
         return fertilizerDatesArrayList
     }
+
+    fun makebyte(modeldata: Fertilizer?): ByteArray? {
+        try {
+            val baos = ByteArrayOutputStream()
+            val oos = ObjectOutputStream(baos)
+            oos.writeObject(modeldata)
+            val employeeAsBytes: ByteArray = baos.toByteArray()
+            val bais = ByteArrayInputStream(employeeAsBytes)
+            return employeeAsBytes
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+
+    fun read(data: ByteArray?): Fertilizer? {
+        try {
+            val baip = ByteArrayInputStream(data)
+            val ois = ObjectInputStream(baip)
+            return ois.readObject() as Fertilizer
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: ClassNotFoundException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
 
 }
