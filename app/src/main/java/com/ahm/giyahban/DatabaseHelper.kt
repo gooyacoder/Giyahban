@@ -52,7 +52,7 @@ class DatabaseHelper(context: Context?) :
                 KEY_IMAGE + " BLOB," +
                 KEY_PLANT_WATER_DATE + " TEXT," +
                 KEY_PLANT_WATER_PERIOD + " TEXT," +
-                KEY_PLANT_FERTILIZERS + " BLOB);"
+                KEY_PLANT_FERTILIZERS + " TEXT);"
 
     }
 
