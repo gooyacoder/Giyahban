@@ -14,6 +14,9 @@ import java.io.IOException
 import java.io.ObjectOutputStream
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 
 
 class EditPlantActivity : AppCompatActivity() {
@@ -112,25 +115,12 @@ class EditPlantActivity : AppCompatActivity() {
         val today = calendar.time.time
         val newFertilizer = Fertilizer(fertilizer_name, today, days)
         fertilizersArrayList?.add(newFertilizer)
-        db.addFertilizer(plant_name, makebyte(fertilizersArrayList))
+        val fert_string = Json.encodeToString(fertilizersArrayList)
+        db.addFertilizer(plant_name, fert_string)
         db.close()
         updateFertilizerList()
         val fertilizingEditText : EditText = findViewById(R.id.fertilizing_days)
         fertilizingEditText.setText("")
-    }
-
-    fun makebyte(modeldata: ArrayList<Fertilizer>?): ByteArray? {
-        try {
-            val baos = ByteArrayOutputStream()
-            val oos = ObjectOutputStream(baos)
-            oos.writeObject(modeldata)
-            val employeeAsBytes: ByteArray = baos.toByteArray()
-            val bais = ByteArrayInputStream(employeeAsBytes)
-            return employeeAsBytes
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return null
     }
 
     fun wateringBtnClicked(view: View) {

@@ -6,6 +6,10 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import java.io.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
 
 
 class DatabaseHelper(context: Context?) :
@@ -69,7 +73,7 @@ class DatabaseHelper(context: Context?) :
 
 
     @Throws(SQLiteException::class)
-    fun addFertilizer(plantName: String?, fertilizers: ByteArray?) {
+    fun addFertilizer(plantName: String?, fertilizers: String?) {
         val updateFertilizerQuery = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers' where $KEY_NAME = '$plantName';"
         val db = this.writableDatabase
         db.execSQL(updateFertilizerQuery)
@@ -121,12 +125,13 @@ class DatabaseHelper(context: Context?) :
             val imagebyte = cursor.getBlob(1)
             val water_date = cursor.getString(2)
             val water_period = cursor.getString(3)
-            val fertilizers = cursor.getBlob(4)
+            val fert_string = cursor.getString(4)
+            val fertilizers: ArrayList<Fertilizer> = Json.decodeFromString(fert_string)
             val plant = Plant(name,
                 imagebyte,
                 if(water_date != null) water_date.toLong() else null,
                 if(water_period != null) water_period.toInt() else null,
-                if(fertilizers != null) read(fertilizers) else null)
+                if(fertilizers != null) fertilizers else null)
             plants.add(plant)
         }
         cursor.close()
@@ -170,15 +175,10 @@ class DatabaseHelper(context: Context?) :
         db.close()
     }
 
-    fun updatePlantFertilizers(name: String, fertilizers: ArrayList<String>) {
+    fun updatePlantFertilizers(name: String, fertilizers: ArrayList<Fertilizer>) {
         var update_query = ""
-        //val fertilizers_string = convertArrayToString(fertilizers)
-
-
-        //convert object to bytearray
-
-
-        //update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers_string' where $KEY_NAME = '$name';"
+        val fertilizers_string = Json.encodeToString(fertilizers)
+        update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
@@ -190,26 +190,28 @@ class DatabaseHelper(context: Context?) :
         val db = this.writableDatabase
         val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
         val cursor = db.rawQuery(query, null)
-        var fertilizers: ArrayList<String>? = ArrayList<String>()
-        var fertilizers_periods: ArrayList<String>? = ArrayList<String>()
-        var list_of_fertilizers: ArrayList<Fertilizer>? = ArrayList()
+        var fert_string = ""
+        var fertilizers: ArrayList<Fertilizer>? = ArrayList()
+        var fertilizers_names: ArrayList<String>? = ArrayList()
+        var fertilizers_periods: ArrayList<String>? = ArrayList()
         // read bytearray
 
         if (cursor.moveToNext()) {
             if(cursor.getString(4) != null){
-                list_of_fertilizers = read(cursor.getBlob(4))
+                fert_string = cursor.getString(4)
+                fertilizers = Json.decodeFromString(fert_string)
             }
         }
-        if (list_of_fertilizers != null) {
-            for(i in list_of_fertilizers){
-                fertilizers?.add(i.name)
+        if (fertilizers != null) {
+            for(i in fertilizers){
+                fertilizers_names?.add(i.name)
                 fertilizers_periods?.add(i.period.toString())
             }
         }
         cursor.close()
         db.close()
         val result : MutableMap<ArrayList<String>? , ArrayList<String>?>? = HashMap()
-        result?.set(fertilizers, fertilizers_periods)
+        result?.set(fertilizers_names, fertilizers_periods)
         return result
     }
 
@@ -218,16 +220,17 @@ class DatabaseHelper(context: Context?) :
         val db = this.writableDatabase
         val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
         val cursor = db.rawQuery(query, null)
-        var fertilizersNames: ArrayList<Fertilizer>? = ArrayList()
-
+        var fertilizers: ArrayList<Fertilizer>? = ArrayList()
+        var fert_string = ""
         if (cursor.moveToNext()) {
             if(cursor.getString(4) != null){
-                fertilizersNames = read(cursor.getBlob(4))
+                fert_string = cursor.getString(4)
+                fertilizers = Json.decodeFromString(fert_string)
             }
         }
         cursor.close()
         db.close()
-        return fertilizersNames
+        return fertilizers
     }
 
     fun getFertilizerPeriodsArrayList(name: String?): ArrayList<String>? {
@@ -266,34 +269,6 @@ class DatabaseHelper(context: Context?) :
         cursor.close()
         db.close()
         return fertilizerDatesArrayList
-    }
-
-    fun makebyte(modeldata: Fertilizer?): ByteArray? {
-        try {
-            val baos = ByteArrayOutputStream()
-            val oos = ObjectOutputStream(baos)
-            oos.writeObject(modeldata)
-            val employeeAsBytes: ByteArray = baos.toByteArray()
-            val bais = ByteArrayInputStream(employeeAsBytes)
-            return employeeAsBytes
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
-
-    fun read(data: ByteArray?): ArrayList<Fertilizer>? {
-        try {
-            val baip = ByteArrayInputStream(data)
-            val ois = ObjectInputStream(baip)
-            return ois.readObject() as ArrayList<Fertilizer>
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } catch (e: ClassNotFoundException) {
-            e.printStackTrace()
-        }
-        return null
     }
 
 
