@@ -80,9 +80,9 @@ class DatabaseHelper(context: Context?) :
         db.close()
     }
 
-    fun removeFertilizer(plantName: String?, fertilizersArrayList: String?, dates: String?, fertilizerPeriodsArrayList: String?){
+    fun removeFertilizer(plantName: String?, fertilizers: String?){
         val db = this.writableDatabase
-        val updateFertilizerQuery = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizersArrayList' where $KEY_NAME = '$plantName';"
+        val updateFertilizerQuery = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers' where $KEY_NAME = '$plantName';"
         db.execSQL(updateFertilizerQuery)
         db.close()
     }
@@ -126,7 +126,10 @@ class DatabaseHelper(context: Context?) :
             val water_date = cursor.getString(2)
             val water_period = cursor.getString(3)
             val fert_string = cursor.getString(4)
-            val fertilizers: ArrayList<Fertilizer> = Json.decodeFromString(fert_string)
+            var fertilizers: ArrayList<Fertilizer>? = null
+            if(fert_string != null){
+                fertilizers = Json.decodeFromString(fert_string)
+            }
             val plant = Plant(name,
                 imagebyte,
                 if(water_date != null) water_date.toLong() else null,
@@ -256,16 +259,20 @@ class DatabaseHelper(context: Context?) :
         val db = this.writableDatabase
         val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
         val cursor = db.rawQuery(query, null)
-        var fertilizerDatesArrayList: ArrayList<String>? = ArrayList<String>()
-        //read bytearray
+        var fertilizerDatesArrayList: ArrayList<String>? = ArrayList()
+        var fertilizers: ArrayList<Fertilizer>? = ArrayList()
+        if (cursor.moveToNext()) {
+            if(cursor.getString(4) != null){
+                var fert_string = cursor.getString(4)
+                fertilizers = Json.decodeFromString(fert_string)
+            }
+        }
+        if(fertilizers != null){
+            for(fert in fertilizers){
+                fertilizerDatesArrayList?.add(fert.date.toString())
+            }
+        }
 
-
-
-//        if (cursor.moveToNext()) {
-//            if(cursor.getString(5) != null){
-//                fertilizerDatesArrayList = convertArrayToArrayList(convertStringToArray(cursor.getString(5)))
-//            }
-//        }
         cursor.close()
         db.close()
         return fertilizerDatesArrayList

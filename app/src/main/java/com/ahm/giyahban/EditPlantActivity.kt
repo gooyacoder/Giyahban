@@ -144,7 +144,7 @@ class EditPlantActivity : AppCompatActivity() {
         }
     }
 
-    /*fun removeFertilizerBtnClicked(view: View) {
+    fun removeFertilizerBtnClicked(view: View) {
         val builder = AlertDialog.Builder(this)
         builder.setMessage("Are you sure you want to Delete Fertilizer?")
             .setCancelable(false)
@@ -156,16 +156,17 @@ class EditPlantActivity : AppCompatActivity() {
                     .toString()
 
                 val text = fertilizer_row.split(':')
-                val fertilizersNamesArrayList = db.getFertilizersNames(plant_name)
-                val index = fertilizersNamesArrayList?.indexOf(text[0].trim())
-                fertilizersNamesArrayList?.clear()
-                val fertilizerPeriodsArrayList = db.getFertilizerPeriodsArrayList(plant_name)
-                fertilizerPeriodsArrayList?.clear()
-                val dates = db.getFertilizerDates(plant_name)
-                dates?.clear()
-                db.removeFertilizer(plant_name, convertArrayToString(fertilizersNamesArrayList),
-                                        convertArrayToString(dates),
-                                        convertArrayToString(fertilizerPeriodsArrayList))
+                val fertilizers: ArrayList<Fertilizer>? = db.getFertilizersArrayList(plant_name)
+                var fertilizer: Fertilizer? = null
+                if (fertilizers != null) {
+                    for(fert in fertilizers){
+                        if(fert.name == text[0].trim())
+                            fertilizer = fert
+                    }
+                }
+                fertilizers?.remove(fertilizer)
+                val fert_string = Json.encodeToString(fertilizers)
+                db.removeFertilizer(plant_name, fert_string)
                 db.close()
                 updateFertilizerList()
             }
@@ -176,7 +177,7 @@ class EditPlantActivity : AppCompatActivity() {
         val alert = builder.create()
         alert.show()
 
-    }*/
+    }
 
     private fun updateFertilizerList() {
         if(plants_names?.size!! > 0){
@@ -189,9 +190,7 @@ class EditPlantActivity : AppCompatActivity() {
                     for(i in fn!!.indices){
                         Thread(Runnable {
                             runOnUiThread{
-                                if(fn[i] != ""){
-                                    fertilizerAdapter.add(fn[i] + " : " + fp?.get(i).toString())
-                                }
+                                fertilizerAdapter.add(fn[i] + " : " + fp?.get(i).toString())
                             }
                         }).start()
                     }
@@ -240,22 +239,6 @@ class EditPlantActivity : AppCompatActivity() {
             }
         val alert = builder.create()
         alert.show()
-    }
-
-
-    fun convertArrayToString(array: ArrayList<String>?): String? {
-        val strSeparator = "__,__"
-        var str = ""
-        if(array != null){
-            for (i in array.indices) {
-                str = str + array[i]
-                // Do not append comma at the end of last element
-                if (i < array.size - 1) {
-                    str = str + strSeparator
-                }
-            }
-        }
-        return str
     }
 
 }

@@ -49,10 +49,7 @@ class TodaysTasksActivity : AppCompatActivity() {
                     }
                     val list: MutableSet<String> = mutableSetOf()
                     val fertilizers = db.getFertilizersArrayList(plant.plant_name)
-
-
                     for(fertNameIndex in fertilizers!!.indices){
-
                         if(fertilizers!![fertNameIndex].period == fertilizer_time_passed[fertNameIndex]){
                             list.add(fertilizers!![fertNameIndex].name)
                         }
