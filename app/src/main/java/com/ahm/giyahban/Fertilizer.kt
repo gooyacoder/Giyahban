@@ -6,5 +6,5 @@ import kotlinx.serialization.json.*
 
 @Serializable
 data class Fertilizer(val name: String,
-                      val date: Long,
+                      var date: Long,
                       val period: Int ){}

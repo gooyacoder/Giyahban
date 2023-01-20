@@ -130,7 +130,7 @@ class TodaysTasksActivity : AppCompatActivity() {
         builder.setMessage("Are you sure you want to reset Today's Tasks?")
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
-                //resetTasks()
+                resetTasks()
                 water.clear()
                 fertilizerList.clear()
                 plant_names_list.clear()
@@ -149,7 +149,7 @@ class TodaysTasksActivity : AppCompatActivity() {
 
     }
 
-   /* private fun resetTasks() {
+    private fun resetTasks() {
         val db = DatabaseHelper(this)
         val plants = db.getPlants()
         var i = 0
@@ -159,53 +159,23 @@ class TodaysTasksActivity : AppCompatActivity() {
             }
             if(fertilizerList[i].size > 0) {
                 val currentPlant = plants[i]
-                val updatedFertilizersDates = currentPlant.fertilizer_dates
                 val fertilizers = currentPlant.fertilizers
                 var j = 0
                 for(fert in fertilizerList[i]){
-                    if(fert == fertilizers!![j]){
-                        updatedFertilizersDates!![j] = today.toString()
+                    if(fert == fertilizers!![j].name){
+                        fertilizers!![j].date = today
                     }
                     if(j < fertilizerList[i].size - 1){
                         j++
                     }
                 }
-                db.updatePlantFertilizerDates(plant, updatedFertilizersDates!!)
+                db.updatePlantFertilizers(plant, fertilizers!!)
             }
             if(i < plant_names_list.size - 1){
                 i++
             }
         }
         db.close()
-    }*/
-
-    /*fun makebyte(modeldata: Dataobject?): ByteArray? {
-        try {
-            val baos = ByteArrayOutputStream()
-            val oos = ObjectOutputStream(baos)
-            oos.writeObject(modeldata)
-            val employeeAsBytes: ByteArray = baos.toByteArray()
-            val bais = ByteArrayInputStream(employeeAsBytes)
-            return employeeAsBytes
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return null
     }
-
-
-    fun read(data: ByteArray?): Dataobject? {
-        try {
-            val baip = ByteArrayInputStream(data)
-            val ois = ObjectInputStream(baip)
-            return ois.readObject() as Dataobject
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } catch (e: ClassNotFoundException) {
-            e.printStackTrace()
-        }
-        return null
-    }*/
-
 
 }
