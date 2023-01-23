@@ -59,6 +59,8 @@ class TodaysTasksActivity : AppCompatActivity() {
                     if(plant.water_date != null){
                         if(plant.water_period!! == watering_time_passed){
                             water.add(true)
+                        }else{
+                            water.add(false)
                         }
                     }else {
                         water.add(false)
