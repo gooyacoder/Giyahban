@@ -21,4 +21,6 @@
     <string name="add_new_plant">افزودن گیاه جدید</string>
     <string name="name">نام گیاه</string>
     <string name="editplantactivity">EditPlantActivity</string>
+    <string name="exit">exit</string>
+    <string name="save">save</string>
 </resources>
