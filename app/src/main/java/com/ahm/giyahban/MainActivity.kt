@@ -7,10 +7,14 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import java.io.*
 
 
 class MainActivity : AppCompatActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -51,11 +55,11 @@ class MainActivity : AppCompatActivity() {
         // Handle item selection
         return when (item.getItemId()) {
             R.id.save -> {
-                // Save()
+                Save()
                 true
             }
             R.id.update -> {
-                // Update()
+                update()
                 true
             }
             R.id.exit -> {
@@ -67,10 +71,46 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun Save() {
-
+        writeFileOnInternalStorage()
     }
 
     fun update() {
-
+        val text = readFileOnInternalStorage()
+        Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
     }
+
+    fun writeFileOnInternalStorage() {
+        val myExternalFile = File(getExternalFilesDir("giyahban"), "Test")
+        if(!myExternalFile.exists())
+            myExternalFile.mkdirs()
+        try {
+            val fileToWrite = File(myExternalFile, "file.txt")
+            val fileOutPutStream = FileOutputStream(fileToWrite)
+            fileOutPutStream.write("File Saved Successfully".toByteArray())
+            fileOutPutStream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        Toast.makeText(applicationContext,"data save",Toast.LENGTH_SHORT).show()
+    }
+
+    fun readFileOnInternalStorage(): String? {
+        var myExternalFile = File(getExternalFilesDir("giyahban/Test"), "file.txt")
+        var text: String? = null
+        var fileInputStream = FileInputStream(myExternalFile)
+        var inputStreamReader: InputStreamReader = InputStreamReader(fileInputStream)
+        val bufferedReader: BufferedReader = BufferedReader(inputStreamReader)
+        val stringBuilder: StringBuilder = StringBuilder()
+
+        while ({ text = bufferedReader.readLine(); text }() != null) {
+            stringBuilder.append(text)
+        }
+        fileInputStream.close()
+        //Displaying data on EditText
+        //Toast.makeText(applicationContext, stringBuilder.toString(), Toast.LENGTH_SHORT).show()
+
+        return stringBuilder.toString()
+    }
+
+
 }
