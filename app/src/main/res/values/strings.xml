@@ -23,4 +23,6 @@
     <string name="editplantactivity">EditPlantActivity</string>
     <string name="exit">exit</string>
     <string name="save">save</string>
+    <string name="update">update</string>
+    <string name="option_menu">Option Menu</string>
 </resources>

@@ -54,6 +54,10 @@ class MainActivity : AppCompatActivity() {
                 // Save()
                 true
             }
+            R.id.update -> {
+                // Update()
+                true
+            }
             R.id.exit -> {
                 finish()
                 true
@@ -63,6 +67,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun Save() {
+
+    }
+
+    fun update() {
 
     }
 }
