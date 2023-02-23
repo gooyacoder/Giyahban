@@ -61,6 +61,21 @@ class DatabaseHelper(context: Context?) :
     }
 
     @Throws(SQLiteException::class)
+    fun updatePlants(plants: MutableList<Plant> ) {
+        val database = this.writableDatabase
+        for(plant in plants){
+            val cv = ContentValues()
+            cv.put(KEY_NAME, plant.plant_name)
+            cv.put(KEY_IMAGE, plant.image)
+            cv.put(KEY_PLANT_WATER_DATE, plant.water_date)
+            cv.put(KEY_PLANT_WATER_PERIOD, plant.water_period)
+            cv.put(KEY_PLANT_FERTILIZERS, Json.encodeToString(plant.fertilizers))
+            database.insert(DB_TABLE, null, cv)
+        }
+        database.close()
+    }
+
+    @Throws(SQLiteException::class)
     fun addEntry(name: String, image: ByteArray ) : Long {
         val database = this.writableDatabase
         val cv = ContentValues()

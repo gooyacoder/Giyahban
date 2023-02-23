@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.*
@@ -78,7 +79,15 @@ class MainActivity : AppCompatActivity() {
 
     fun update() {
         val text = readFileFromExternalStorage()
-        Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
+        val plants: MutableList<Plant> = Json.decodeFromString(text!!)
+        val db = DatabaseHelper(this)
+        try {
+            db.updatePlants(plants)
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+        db.close()
+        Toast.makeText(applicationContext, "Plants Data Updated.", Toast.LENGTH_LONG).show()
     }
 
     fun writeFileOnExternalStorage() {
@@ -112,9 +121,6 @@ class MainActivity : AppCompatActivity() {
             stringBuilder.append(text)
         }
         fileInputStream.close()
-        //Displaying data on EditText
-        //Toast.makeText(applicationContext, stringBuilder.toString(), Toast.LENGTH_SHORT).show()
-
         return stringBuilder.toString()
     }
 
