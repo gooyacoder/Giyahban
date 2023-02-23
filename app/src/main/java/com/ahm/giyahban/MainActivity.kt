@@ -9,6 +9,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.*
 
 
@@ -71,31 +73,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun Save() {
-        writeFileOnInternalStorage()
+        writeFileOnExternalStorage()
     }
 
     fun update() {
-        val text = readFileOnInternalStorage()
+        val text = readFileFromExternalStorage()
         Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
     }
 
-    fun writeFileOnInternalStorage() {
-        val myExternalFile = File(getExternalFilesDir("giyahban"), "Test")
+    fun writeFileOnExternalStorage() {
+        val db = DatabaseHelper(this)
+        val plants = db.getPlants()
+        db.close()
+        val plants_string = Json.encodeToString(plants)
+        val myExternalFile = File(getExternalFilesDir("giyahban"), "Data")
         if(!myExternalFile.exists())
             myExternalFile.mkdirs()
         try {
-            val fileToWrite = File(myExternalFile, "file.txt")
+            val fileToWrite = File(myExternalFile, "plants.txt")
             val fileOutPutStream = FileOutputStream(fileToWrite)
-            fileOutPutStream.write("File Saved Successfully".toByteArray())
+            fileOutPutStream.write(plants_string.toByteArray())
             fileOutPutStream.close()
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        Toast.makeText(applicationContext,"data save",Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext,"Plants Data Saved.",Toast.LENGTH_SHORT).show()
     }
 
-    fun readFileOnInternalStorage(): String? {
-        var myExternalFile = File(getExternalFilesDir("giyahban/Test"), "file.txt")
+    fun readFileFromExternalStorage(): String? {
+        var myExternalFile = File(getExternalFilesDir("giyahban/Data"), "plants.txt")
         var text: String? = null
         var fileInputStream = FileInputStream(myExternalFile)
         var inputStreamReader: InputStreamReader = InputStreamReader(fileInputStream)

@@ -2,20 +2,14 @@ package com.ahm.giyahban
 
 
 import android.os.Bundle
-import android.provider.ContactsContract.Data
 import android.view.View
 import android.widget.*
 import android.widget.AbsListView.CHOICE_MODE_SINGLE
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.io.ObjectOutputStream
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 
 
@@ -28,8 +22,6 @@ class EditPlantActivity : AppCompatActivity() {
     var fertilizer_list: ListView? = null
     var fertilizerDropDownSpinner: Spinner? = null
     var fertilizing_days: EditText? = null
-    //var fertilizerDatesArrayList: ArrayList<String>? = null
-    //var fertilizerPeriodsArrayList: ArrayList<String>? = null
     var fertilizersArrayList: ArrayList<Fertilizer>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

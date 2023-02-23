@@ -236,24 +236,7 @@ class DatabaseHelper(context: Context?) :
         return fertilizers
     }
 
-    fun getFertilizerPeriodsArrayList(name: String?): ArrayList<String>? {
-        val db = this.writableDatabase
-        val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
-        val cursor = db.rawQuery(query, null)
-        var fertilizerPeriodsArrayList: ArrayList<String>? = ArrayList<String>()
-        // read bytearray
 
-
-
-//        if (cursor.moveToNext()) {
-//            if(cursor.getString(6) != null){
-//                fertilizerPeriodsArrayList = convertArrayToArrayList(convertStringToArray(cursor.getString(6)))
-//            }
-//        }
-        cursor.close()
-        db.close()
-        return fertilizerPeriodsArrayList
-    }
 
     fun getFertilizerDates(name: String?): ArrayList<String>? {
         val db = this.writableDatabase
