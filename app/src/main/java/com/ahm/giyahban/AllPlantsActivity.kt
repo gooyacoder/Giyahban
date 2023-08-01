@@ -23,27 +23,27 @@ class AllPlantsActivity : AppCompatActivity() {
                 index = position
             }
         }
-        prepareUI()
+    //    prepareUI()
     }
 
-    private fun prepareUI() {
-        val db = DatabaseHelper(this)
-        val plants = db.getPlants()
-        db.close()
-
-        plant_names_list.clear()
-        if (plants.size > 0) {
-            for (plant in plants) {
-                val plant_image = DbBitmapUtility.getImage(plant.image)
-                plant_images_list.add(plant_image)
-                val plant_name = plant.plant_name
-                plant_names_list.add(plant_name)
-
-            }
-        }
-        val customPlantList = CustomPlantList(this, plant_names_list, plant_images_list)
-        listView?.adapter = customPlantList
-    }
+//    private fun prepareUI() {
+//        val db = DatabaseHelper(this)
+//        val plants = db.getPlants()
+//        db.close()
+//
+//        plant_names_list.clear()
+//        if (plants.size > 0) {
+//            for (plant in plants) {
+//                val plant_image = DbBitmapUtility.getImage(plant.image)
+//                plant_images_list.add(plant_image)
+//                val plant_name = plant.plant_name
+//                plant_names_list.add(plant_name)
+//
+//            }
+//        }
+//        val customPlantList = CustomPlantList(this, plant_names_list, plant_images_list)
+//        listView?.adapter = customPlantList
+//    }
 
     fun delete_button_clicked(view: View) {
         val builder = AlertDialog.Builder(this)
@@ -54,7 +54,7 @@ class AllPlantsActivity : AppCompatActivity() {
                 val db = DatabaseHelper(this)
                 db.removePlant(plantName)
                 db.close()
-                prepareUI()
+               // prepareUI()
             }
             .setNegativeButton("No") { dialog, id ->
                 // Dismiss the dialog

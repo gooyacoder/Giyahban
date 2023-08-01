@@ -22,65 +22,65 @@ class TodaysTasksActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_todays_tasks)
-        prepareUI()
-        getTodaysTasks()
+       // prepareUI()
+       // getTodaysTasks()
     }
 
-    private fun getTodaysTasks() {
-        val db = DatabaseHelper(this)
-        val plants = db.getPlants()
-
-        if (plants.size > 0) {
-            for (plant in plants) {
-                if(hasTask(plant)){
-                    val plant_image = DbBitmapUtility.getImage(plant.image)
-                    plant_images_list.add(plant_image)
-                    val plant_name = plant.plant_name
-                    plant_names_list.add(plant_name)
-                    var watering_time_passed: Int = 0
-                    if(plant.water_date != null){
-                        watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
-                    }
-                    val fertilizer_time_passed : ArrayList<Int> = ArrayList()
-                    val fert_dates = db.getFertilizerDates(plant.plant_name)
-                    for (frt in fert_dates!!){
-                        if(frt.isNotEmpty())
-                            fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
-                    }
-                    val list: MutableSet<String> = mutableSetOf()
-                    val fertilizers = db.getFertilizersArrayList(plant.plant_name)
-                    for(fertNameIndex in fertilizers!!.indices){
-                        if(fertilizers!![fertNameIndex].period == fertilizer_time_passed[fertNameIndex]){
-                            list.add(fertilizers!![fertNameIndex].name)
-                        }
-
-                    }
-                    fertilizerList.add(list)
-                    if(plant.water_date != null){
-                        if(plant.water_period!! == watering_time_passed){
-                            water.add(true)
-                        }else{
-                            water.add(false)
-                        }
-                    }else {
-                        water.add(false)
-                    }
-                }
-            }
-        }
-        val customPlantList = CustomPlantList2(this, plant_names_list, plant_images_list, water, fertilizerList)
-        TasksList?.adapter = customPlantList
-        var plantsToWater = ""
-        water.forEachIndexed{i, w ->
-            if(w){
-                plantsToWater += plant_names_list[i] + ", "
-            }
-        }
-        //Toast.makeText(this, plantsToWater, Toast.LENGTH_LONG).show()
-        val waterTextView = findViewById<TextView>(R.id.wateringTextView)
-        waterTextView.setText(waterTextView.text.toString() + plantsToWater)
-        db.close()
-    }
+//    private fun getTodaysTasks() {
+//        val db = DatabaseHelper(this)
+//        val plants = db.getPlants()
+//
+//        if (plants.size > 0) {
+//            for (plant in plants) {
+//                if(hasTask(plant)){
+//                    val plant_image = DbBitmapUtility.getImage(plant.image)
+//                    plant_images_list.add(plant_image)
+//                    val plant_name = plant.plant_name
+//                    plant_names_list.add(plant_name)
+//                    var watering_time_passed: Int = 0
+//                    if(plant.water_date != null){
+//                        watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
+//                    }
+//                    val fertilizer_time_passed : ArrayList<Int> = ArrayList()
+//                    val fert_dates = db.getFertilizerDates(plant.plant_name)
+//                    for (frt in fert_dates!!){
+//                        if(frt.isNotEmpty())
+//                            fertilizer_time_passed.add(calculateDays(today - frt.toLong()))
+//                    }
+//                    val list: MutableSet<String> = mutableSetOf()
+//                    val fertilizers = db.getFertilizersArrayList(plant.plant_name)
+//                    for(fertNameIndex in fertilizers!!.indices){
+//                        if(fertilizers!![fertNameIndex].period == fertilizer_time_passed[fertNameIndex]){
+//                            list.add(fertilizers!![fertNameIndex].name)
+//                        }
+//
+//                    }
+//                    fertilizerList.add(list)
+//                    if(plant.water_date != null){
+//                        if(plant.water_period!! == watering_time_passed){
+//                            water.add(true)
+//                        }else{
+//                            water.add(false)
+//                        }
+//                    }else {
+//                        water.add(false)
+//                    }
+//                }
+//            }
+//        }
+//        val customPlantList = CustomPlantList2(this, plant_names_list, plant_images_list, water, fertilizerList)
+//        TasksList?.adapter = customPlantList
+//        var plantsToWater = ""
+//        water.forEachIndexed{i, w ->
+//            if(w){
+//                plantsToWater += plant_names_list[i] + ", "
+//            }
+//        }
+//        Toast.makeText(this, plantsToWater, Toast.LENGTH_LONG).show()
+//        val waterTextView = findViewById<TextView>(R.id.wateringTextView)
+//        waterTextView.setText(waterTextView.text.toString() + plantsToWater)
+//        db.close()
+//    }
 
     private fun hasTask(plant: Plant): Boolean {
         val db = DatabaseHelper(this)
@@ -117,39 +117,39 @@ class TodaysTasksActivity : AppCompatActivity() {
         return (l/(1000*60*60*24)).toInt()
     }
 
-    private fun prepareUI() {
-        TasksList = findViewById(R.id.tasks_list)
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 5)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        today = calendar.getTime().getTime()
-    }
+//    private fun prepareUI() {
+//        TasksList = findViewById(R.id.tasks_list)
+//        val calendar = Calendar.getInstance()
+//        calendar.set(Calendar.HOUR_OF_DAY, 5)
+//        calendar.set(Calendar.MINUTE, 0)
+//        calendar.set(Calendar.SECOND, 0)
+//        calendar.set(Calendar.MILLISECOND, 0)
+//        today = calendar.getTime().getTime()
+//    }
 
-    fun resetButtonClicked(view: View) {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage("Are you sure you want to reset Today's Tasks?")
-            .setCancelable(false)
-            .setPositiveButton("Yes") { dialog, id ->
-                resetTasks()
-                water.clear()
-                fertilizerList.clear()
-                plant_names_list.clear()
-                plant_images_list.clear()
-                val waterTextView = findViewById<TextView>(R.id.wateringTextView)
-                waterTextView.setText("")
-                getTodaysTasks()
-                Toast.makeText(this, "Tasks Reset Successfully.", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("No") { dialog, id ->
-                // Dismiss the dialog
-                dialog.dismiss()
-            }
-        val alert = builder.create()
-        alert.show()
-
-    }
+//    fun resetButtonClicked(view: View) {
+//        val builder = AlertDialog.Builder(this)
+//        builder.setMessage("Are you sure you want to reset Today's Tasks?")
+//            .setCancelable(false)
+//            .setPositiveButton("Yes") { dialog, id ->
+//                resetTasks()
+//                water.clear()
+//                fertilizerList.clear()
+//                plant_names_list.clear()
+//                plant_images_list.clear()
+//                val waterTextView = findViewById<TextView>(R.id.wateringTextView)
+//                waterTextView.setText("")
+//                getTodaysTasks()
+//                Toast.makeText(this, "Tasks Reset Successfully.", Toast.LENGTH_SHORT).show()
+//            }
+//            .setNegativeButton("No") { dialog, id ->
+//                // Dismiss the dialog
+//                dialog.dismiss()
+//            }
+//        val alert = builder.create()
+//        alert.show()
+//
+//    }
 
     private fun resetTasks() {
         val db = DatabaseHelper(this)
