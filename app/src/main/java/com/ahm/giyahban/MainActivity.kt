@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     }
     fun show_plants_tasks_btn_clicked(view: View) {
 
-        val intent = Intent(this, TodaysTasksActivity::class.java)
+        val intent = Intent(this, TaskChooserActivity::class.java)
         startActivity(intent)
 
     }
