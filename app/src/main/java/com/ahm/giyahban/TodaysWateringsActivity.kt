@@ -2,16 +2,11 @@ package com.ahm.giyahban
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.View
 import android.widget.ListView
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import java.io.*
 import java.util.*
 
-class TodaysTasksActivity : AppCompatActivity() {
+class TodaysWateringsActivity : AppCompatActivity() {
 
     var TasksList : ListView? = null
     var today: Long = 0
@@ -21,7 +16,7 @@ class TodaysTasksActivity : AppCompatActivity() {
     val plant_images_list : MutableList<Bitmap> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_todays_tasks)
+        setContentView(R.layout.activity_todays_waterings)
        // prepareUI()
        // getTodaysTasks()
     }
