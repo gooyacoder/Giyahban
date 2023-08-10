@@ -64,8 +64,9 @@ class EditPlantActivity : AppCompatActivity() {
 
     private fun prepareFertilizerDropDownSpinner() {
         val items = arrayOf( "20-20-20", "12-12-36", "10-52-10", "3-11-38",
-            "Humic Acid", "Fungicide", "Amino Acid", "Sea Algae", "Magnesium Sulphate",
-            "Super Phosphate", "Micronutrient", "Iron")
+            "Humic Acid", "Fungicide", "Amino Acid", "Seaweed", "Magnesium Sulphate",
+            "Super Phosphate", "Micronutrient", "Iron", "Calcium Nitrate", "Urea",
+            "Zinc Sulphate", "Sulfur", "Potassium Nitrate", "Potassium Sulphate")
 
         val adapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(
             this, R.layout.custom_spinner_view, items)
