@@ -276,5 +276,18 @@ class DatabaseHelper(context: Context?) :
         return fertilizerDatesArrayList
     }
 
+    fun updatePlant(plant: Plant) {
+        val db = this.writableDatabase
+        val cv = ContentValues()
+        cv.put(KEY_NAME, plant.plant_name)
+        cv.put(KEY_IMAGE, plant.image)
+        cv.put(KEY_PLANT_WATER_DATE, plant.water_date)
+        cv.put(KEY_PLANT_WATER_PERIOD, plant.water_period)
+        cv.put(KEY_PLANT_FERTILIZERS, Json.encodeToString(plant.fertilizers))
+        db.insert(DB_TABLE, null, cv)
+        db.close()
+    }
+
+
 
 }
