@@ -22,6 +22,9 @@
             android:name=".TodaysFertilizersActivity"
             android:exported="false" />
         <activity
+            android:name=".DeletePlantActivity"
+            android:exported="false" />
+        <activity
             android:name=".TaskChooserActivity"
             android:exported="false" />
         <activity

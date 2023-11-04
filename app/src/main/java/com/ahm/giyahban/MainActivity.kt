@@ -124,5 +124,8 @@ class MainActivity : AppCompatActivity() {
         return stringBuilder.toString()
     }
 
-
+    fun delete_plant_btn_clicked(view: View) {
+        val intent = Intent(this, DeletePlantActivity::class.java)
+        startActivity(intent)
+    }
 }
