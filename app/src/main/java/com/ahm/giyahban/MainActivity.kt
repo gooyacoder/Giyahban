@@ -4,6 +4,8 @@ package com.ahm.giyahban
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -74,10 +76,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun Save() {
-        writeFileOnExternalStorage()
+        var mainHandler = Handler(Looper.getMainLooper());
+
+        var myRunnable = Runnable() {
+            run() {
+                writeFileOnExternalStorage()
+            }
+        };
+        mainHandler.post(myRunnable);
     }
 
     fun update() {
+        var mainHandler = Handler(Looper.getMainLooper());
+
+        var myRunnable = Runnable() {
+            run() {
+                updateFromFile()
+            }
+        };
+        mainHandler.post(myRunnable);
+    }
+
+    private fun updateFromFile(){
         val text = readFileFromExternalStorage()
         val plants: MutableList<Plant> = Json.decodeFromString(text!!)
         val db = DatabaseHelper(this)

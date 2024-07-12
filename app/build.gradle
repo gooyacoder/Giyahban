@@ -6,13 +6,11 @@ plugins {
 
 android {
     namespace 'com.ahm.giyahban'
-    compileSdk 34
-    buildToolsVersion "33.0.2"
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.ahm.giyahban"
         minSdk 23
-        targetSdk 34
         versionCode 1
         versionName "1.0"
 
