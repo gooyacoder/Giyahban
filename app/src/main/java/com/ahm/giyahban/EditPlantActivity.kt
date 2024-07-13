@@ -23,6 +23,7 @@ class EditPlantActivity : AppCompatActivity() {
     var fertilizerDropDownSpinner: Spinner? = null
     var fertilizing_days: EditText? = null
     var fertilizersArrayList: ArrayList<Fertilizer>? = null
+    var plantImageForEdit : ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +37,7 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     private fun prepareUI() {
+        plantImageForEdit = findViewById(R.id.plantImageEdit)
         namesDropDownSpinner = findViewById(R.id.PlantsDropDownSpinner)
         fertilizerDropDownSpinner = findViewById(R.id.fertilizerDropDownSpinner)
         fertilizing_days = findViewById(R.id.fertilizing_days)
@@ -45,6 +47,7 @@ class EditPlantActivity : AppCompatActivity() {
                 plant_position = position
                 updateFertilizerList()
                 updateCurrentWatering()
+                loadPlantImage()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -52,6 +55,19 @@ class EditPlantActivity : AppCompatActivity() {
             }
         }
         fertilizer_list = findViewById(R.id.fertilizer_list)
+    }
+
+    private fun loadPlantImage() {
+        val db = DatabaseHelper(this)
+        if(plants_names != null && plants_names!!.size > 0){
+            val plant_name = plants_names?.get(plant_position)
+            if(plant_name != null){
+                val plant_image = DbBitmapUtility.getImage(db.getPlant(plant_name).image)
+                plantImageForEdit?.setImageBitmap(plant_image)
+
+            }
+        }
+        db.close()
     }
 
     private fun prepareFertilizerList() {

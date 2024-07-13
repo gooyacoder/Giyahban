@@ -61,9 +61,9 @@ class DatabaseHelper(context: Context?) :
     }
 
     @Throws(SQLiteException::class)
-    fun updatePlants(plants: MutableList<Plant> ) {
+    fun updatePlants(plants: MutableList<Plant>) {
         val database = this.writableDatabase
-        for(plant in plants){
+        for (plant in plants) {
             val cv = ContentValues()
             cv.put(KEY_NAME, plant.plant_name)
             cv.put(KEY_IMAGE, plant.image)
@@ -76,12 +76,16 @@ class DatabaseHelper(context: Context?) :
     }
 
     @Throws(SQLiteException::class)
-    fun addEntry(name: String, image: ByteArray ) : Long {
+    fun addEntry(name: String, image: ByteArray): Long {
         val database = this.writableDatabase
         val cv = ContentValues()
         cv.put(KEY_NAME, name)
         cv.put(KEY_IMAGE, image)
-        val result = database.insert(DB_TABLE, null, cv) // returns -1 if insert fails, show message that the plant name exists.
+        val result = database.insert(
+            DB_TABLE,
+            null,
+            cv
+        ) // returns -1 if insert fails, show message that the plant name exists.
         database.close()
         return result
     }
@@ -89,46 +93,74 @@ class DatabaseHelper(context: Context?) :
 
     @Throws(SQLiteException::class)
     fun addFertilizer(plantName: String?, fertilizers: String?) {
-        val updateFertilizerQuery = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers' where $KEY_NAME = '$plantName';"
+        val updateFertilizerQuery =
+            "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers' where $KEY_NAME = '$plantName';"
         val db = this.writableDatabase
         db.execSQL(updateFertilizerQuery)
         db.close()
     }
 
-    fun removeFertilizer(plantName: String?, fertilizers: String?){
+    fun removeFertilizer(plantName: String?, fertilizers: String?) {
         val db = this.writableDatabase
-        val updateFertilizerQuery = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers' where $KEY_NAME = '$plantName';"
+        val updateFertilizerQuery =
+            "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers' where $KEY_NAME = '$plantName';"
         db.execSQL(updateFertilizerQuery)
         db.close()
     }
 
     @Throws(SQLiteException::class)
-    fun addWatering(plantName: String?,date: String?, days: String?) {
-        val updateWateringQuery = "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$date', $KEY_PLANT_WATER_PERIOD = '$days' where $KEY_NAME = '$plantName';"
+    fun addWatering(plantName: String?, date: String?, days: String?) {
+        val updateWateringQuery =
+            "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$date', $KEY_PLANT_WATER_PERIOD = '$days' where $KEY_NAME = '$plantName';"
         val db = this.writableDatabase
         db.execSQL(updateWateringQuery)
         db.close()
     }
 
     @Throws(SQLiteException::class)
-    fun getWateringDays(plantName: String?) : String? {
+    fun getWateringDays(plantName: String?): String? {
         var days = ""
         val plants = this.getPlants()
-        for(plant in plants){
-            if(plant.plant_name == plantName){
+        for (plant in plants) {
+            if (plant.plant_name == plantName) {
                 days = plant.water_period.toString()
             }
         }
         return days
     }
 
-    fun removeWatering(plantName: String?){
+    fun removeWatering(plantName: String?) {
         val db = this.writableDatabase
-        val updateWateringQuery = "update $DB_TABLE set $KEY_PLANT_WATER_DATE = NULL, $KEY_PLANT_WATER_PERIOD = NULL where $KEY_NAME = '$plantName';"
+        val updateWateringQuery =
+            "update $DB_TABLE set $KEY_PLANT_WATER_DATE = NULL, $KEY_PLANT_WATER_PERIOD = NULL where $KEY_NAME = '$plantName';"
         db.execSQL(updateWateringQuery)
         db.close()
     }
 
+    fun getPlant(name: String?): Plant {
+        val db = this.writableDatabase
+        val query = "SELECT * FROM $DB_TABLE where $KEY_NAME = '$name';"
+        val cursor = db.rawQuery(query, null)
+        cursor.moveToNext()
+        val name = cursor.getString(0)
+        val imagebyte = cursor.getBlob(1)
+        val water_date = cursor.getString(2)
+        val water_period = cursor.getString(3)
+        val fert_string = cursor.getString(4)
+        var fertilizers: ArrayList<Fertilizer>? = null
+        if (fert_string != null) {
+            fertilizers = Json.decodeFromString(fert_string)
+        }
+        val plant = Plant(
+            name,
+            imagebyte,
+            if (water_date != null) water_date.toLong() else null,
+            if (water_period != null) water_period.toInt() else null,
+            if (fertilizers != null) fertilizers else null
+        )
+        db.close()
+        return plant
+    }
 
     @JvmName("getPlants1")
     fun getPlants(): MutableList<Plant> {
@@ -142,14 +174,16 @@ class DatabaseHelper(context: Context?) :
             val water_period = cursor.getString(3)
             val fert_string = cursor.getString(4)
             var fertilizers: ArrayList<Fertilizer>? = null
-            if(fert_string != null){
+            if (fert_string != null) {
                 fertilizers = Json.decodeFromString(fert_string)
             }
-            val plant = Plant(name,
+            val plant = Plant(
+                name,
                 imagebyte,
-                if(water_date != null) water_date.toLong() else null,
-                if(water_period != null) water_period.toInt() else null,
-                if(fertilizers != null) fertilizers else null)
+                if (water_date != null) water_date.toLong() else null,
+                if (water_period != null) water_period.toInt() else null,
+                if (fertilizers != null) fertilizers else null
+            )
             plants.add(plant)
         }
         cursor.close()
@@ -157,14 +191,16 @@ class DatabaseHelper(context: Context?) :
         return plants
     }
 
-    fun removePlant(name: String?){
+    fun removePlant(name: String?) {
         val db = this.writableDatabase
-        db.execSQL("delete from plant_table where" +
-                " plant_name = \"" + name + "\";");
+        db.execSQL(
+            "delete from plant_table where" +
+                    " plant_name = \"" + name + "\";"
+        );
         db.close()
     }
 
-    fun updatePlantImage(name: String, image: ByteArray){
+    fun updatePlantImage(name: String, image: ByteArray) {
 
         var update_query = ""
         update_query = "update $DB_TABLE set $KEY_IMAGE = $image where $KEY_NAME = '$name';"
@@ -173,21 +209,23 @@ class DatabaseHelper(context: Context?) :
         db.close()
     }
 
-    fun updatePlantWaterDate(name: String, water_date: Long ) {
+    fun updatePlantWaterDate(name: String, water_date: Long) {
 
         var update_query = ""
         val water_date_string = water_date.toString()
-        update_query = "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$water_date_string' where $KEY_NAME = '$name';"
+        update_query =
+            "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$water_date_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
 
     }
 
-    fun updatePlantWaterPeriod(name: String,  water_period: Int ) {
+    fun updatePlantWaterPeriod(name: String, water_period: Int) {
         var update_query = ""
         val water_period_string = water_period.toString()
-        update_query = "update $DB_TABLE set $KEY_PLANT_WATER_PERIOD = '$water_period_string' where $KEY_NAME = '$name';"
+        update_query =
+            "update $DB_TABLE set $KEY_PLANT_WATER_PERIOD = '$water_period_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
@@ -196,7 +234,8 @@ class DatabaseHelper(context: Context?) :
     fun updatePlantFertilizers(name: String, fertilizers: ArrayList<Fertilizer>) {
         var update_query = ""
         val fertilizers_string = Json.encodeToString(fertilizers)
-        update_query = "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers_string' where $KEY_NAME = '$name';"
+        update_query =
+            "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)
         db.close()
@@ -204,7 +243,7 @@ class DatabaseHelper(context: Context?) :
 
 
     @JvmName("getFertilizers1")
-    fun getFertilizers(name: String?): MutableMap<ArrayList<String>? , ArrayList<String>?>? {
+    fun getFertilizers(name: String?): MutableMap<ArrayList<String>?, ArrayList<String>?>? {
         val db = this.writableDatabase
         val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
         val cursor = db.rawQuery(query, null)
@@ -215,20 +254,20 @@ class DatabaseHelper(context: Context?) :
         // read bytearray
 
         if (cursor.moveToNext()) {
-            if(cursor.getString(4) != null){
+            if (cursor.getString(4) != null) {
                 fert_string = cursor.getString(4)
                 fertilizers = Json.decodeFromString(fert_string)
             }
         }
         if (fertilizers != null) {
-            for(i in fertilizers){
+            for (i in fertilizers) {
                 fertilizers_names?.add(i.name)
                 fertilizers_periods?.add(i.period.toString())
             }
         }
         cursor.close()
         db.close()
-        val result : MutableMap<ArrayList<String>? , ArrayList<String>?>? = HashMap()
+        val result: MutableMap<ArrayList<String>?, ArrayList<String>?>? = HashMap()
         result?.set(fertilizers_names, fertilizers_periods)
         return result
     }
@@ -241,7 +280,7 @@ class DatabaseHelper(context: Context?) :
         var fertilizers: ArrayList<Fertilizer>? = ArrayList()
         var fert_string = ""
         if (cursor.moveToNext()) {
-            if(cursor.getString(4) != null){
+            if (cursor.getString(4) != null) {
                 fert_string = cursor.getString(4)
                 fertilizers = Json.decodeFromString(fert_string)
             }
@@ -252,7 +291,6 @@ class DatabaseHelper(context: Context?) :
     }
 
 
-
     fun getFertilizerDates(name: String?): ArrayList<String>? {
         val db = this.writableDatabase
         val query = "SELECT * FROM $DB_TABLE where $KEY_NAME='$name';"
@@ -260,13 +298,13 @@ class DatabaseHelper(context: Context?) :
         var fertilizerDatesArrayList: ArrayList<String>? = ArrayList()
         var fertilizers: ArrayList<Fertilizer>? = ArrayList()
         if (cursor.moveToNext()) {
-            if(cursor.getString(4) != null){
+            if (cursor.getString(4) != null) {
                 var fert_string = cursor.getString(4)
                 fertilizers = Json.decodeFromString(fert_string)
             }
         }
-        if(fertilizers != null){
-            for(fert in fertilizers){
+        if (fertilizers != null) {
+            for (fert in fertilizers) {
                 fertilizerDatesArrayList?.add(fert.date.toString())
             }
         }
@@ -287,7 +325,6 @@ class DatabaseHelper(context: Context?) :
         db.insert(DB_TABLE, null, cv)
         db.close()
     }
-
 
 
 }
