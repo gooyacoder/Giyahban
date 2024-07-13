@@ -3,49 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:layout_marginRight="10dp"
-        >
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_marginStart="40dp"
             android:layout_centerHorizontal="true"
+            android:layout_marginStart="40dp"
             android:layout_marginBottom="40dp"
+            android:fontFamily="@font/titr_1"
+            android:gravity="center_horizontal"
             android:text="@string/add_new_plant"
-            android:textColor="#000000" />
-
-        <TextView
-            android:id="@+id/lbl_name"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="19dp"
-            android:layout_toRightOf="@id/name_text"
-            android:gravity="center"
-            android:text="@string/name"
-            android:layout_below="@id/label"
-            android:layout_marginStart="40dp"/>
+            android:textColor="#99ee66"
+            android:textSize="40sp" />
 
         <EditText
             android:id="@+id/name_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="16dp"
-
-            android:background="#E4F3A2"
-            android:ems="10"
-            android:inputType="textPersonName"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
             android:layout_below="@id/label"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="25dp"
+            android:background="#EEFF50"
+            android:gravity="center"
+            android:hint="نام گیاه را وارد کنید"
+            android:inputType="textPersonName"
+            android:textColor="#359935"
+            android:textColorHint="#ffcc00"
 
             />
 
@@ -53,32 +44,42 @@
             android:id="@+id/plant_preview"
             android:layout_width="140dp"
             android:layout_height="140dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="14dp"
-            android:layout_marginTop="15dp"
-            app:srcCompat="@mipmap/ic_launcher"
-            android:layout_below="@id/lbl_name"/>
+            android:layout_below="@id/name_text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="40dp"
+            app:srcCompat="@mipmap/ic_launcher" />
+
+        <Button
+            android:id="@+id/gallery_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/plant_preview"
+            android:onClick="pictureBtnClicked"
+            android:text="@string/gallery"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/picture_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/gallery_btn"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/gallery_btn"
             android:onClick="pictureBtnClicked"
             android:text="@string/take_a_picture"
-            android:textAllCaps="false"
-            android:layout_toRightOf="@id/plant_preview"
-            android:layout_alignBottom="@id/plant_preview"/>
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/add_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="addBtnClicked"
+            android:layout_alignBottom="@id/gallery_btn"
             android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/picture_btn"
+            android:onClick="addBtnClicked"
             android:text="@string/add_plant"
-            android:textAllCaps="false"
-            android:layout_alignBottom="@id/plant_preview"
-            android:layout_toRightOf="@id/picture_btn"/>
+            android:textAllCaps="false" />
 
     </RelativeLayout>
 
