@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Giyahban 0.0.1.1.1</string>
+    <string name="app_name">Giyahban 0.1.0.0.0</string>
     <string name="add">افزودن گیاه جدید</string>
     <string name="take_a_picture">عکس</string>
     <string name="gallery">گالری</string>
@@ -22,8 +22,8 @@
     <string name="add_new_plant">گیاه جدید</string>
     <string name="name">نام گیاه</string>
     <string name="editplantactivity">EditPlantActivity</string>
-    <string name="exit">exit</string>
-    <string name="save">save</string>
-    <string name="update">update</string>
+    <string name="exit">Exit</string>
+    <string name="save">Save</string>
+    <string name="update">Update</string>
     <string name="option_menu">Option Menu</string>
 </resources>
