@@ -51,6 +51,7 @@ class AddPlantActivity : AppCompatActivity() {
                     imageBitmap = selectedImg
                     val plant_preview: ImageView = findViewById(R.id.plant_preview)
                     plant_preview.setImageBitmap(imageBitmap)
+
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
                     Toast.makeText(this, "An error occurred!", Toast.LENGTH_LONG).show()

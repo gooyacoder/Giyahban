@@ -200,13 +200,15 @@ class DatabaseHelper(context: Context?) :
         db.close()
     }
 
-    fun updatePlantImage(name: String, image: ByteArray) {
-
-        var update_query = ""
-        update_query = "update $DB_TABLE set $KEY_IMAGE = $image where $KEY_NAME = '$name';"
+    fun updatePlantImage(name: String, image: ByteArray) : Int{
         val db = this.writableDatabase
-        db.execSQL(update_query)
+        val cv = ContentValues()
+        cv.put(KEY_NAME, name)
+        cv.put(KEY_IMAGE, image)
+        val args = Array<String>(1) { name }
+        val result = db.update(DB_TABLE, cv, "plant_name=?", args)
         db.close()
+        return result
     }
 
     fun updatePlantWaterDate(name: String, water_date: Long) {
@@ -216,7 +218,7 @@ class DatabaseHelper(context: Context?) :
         update_query =
             "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$water_date_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
-        db.execSQL(update_query)
+        db.rawQuery(update_query, null)
         db.close()
 
     }

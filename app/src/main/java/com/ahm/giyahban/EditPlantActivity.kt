@@ -1,6 +1,10 @@
 package com.ahm.giyahban
 
 
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -11,6 +15,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
+import java.io.FileNotFoundException
 
 
 class EditPlantActivity : AppCompatActivity() {
@@ -24,6 +29,10 @@ class EditPlantActivity : AppCompatActivity() {
     var fertilizing_days: EditText? = null
     var fertilizersArrayList: ArrayList<Fertilizer>? = null
     var plantImageForEdit : ImageView? = null
+    var imageEditButton: Button? = null
+
+    var imageBitmap: Bitmap? = null
+    var newImageSelected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +46,7 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     private fun prepareUI() {
+        imageEditButton = findViewById(R.id.imageEditBtn)
         plantImageForEdit = findViewById(R.id.plantImageEdit)
         namesDropDownSpinner = findViewById(R.id.PlantsDropDownSpinner)
         fertilizerDropDownSpinner = findViewById(R.id.fertilizerDropDownSpinner)
@@ -55,6 +65,53 @@ class EditPlantActivity : AppCompatActivity() {
             }
         }
         fertilizer_list = findViewById(R.id.fertilizer_list)
+        imageEditButton?.setOnClickListener(View.OnClickListener {
+            if(!newImageSelected){
+                // open phone gallery to pick an image
+                val intent = Intent(Intent.ACTION_PICK)
+                intent.type = "image/*"
+                val mimeTypes = arrayOf("image/jpeg", "image/png")
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+                startActivityForResult(intent, 2)
+            }else {
+                // update plant image
+                var image_byte_array = imageBitmap?.let { DbBitmapUtility.getBytes(it) }
+                var db = DatabaseHelper(this)
+                var plant_name = plants_names?.get(plant_position)
+                val result = db.updatePlantImage(plant_name!!, image_byte_array!!)
+                db.close()
+                newImageSelected = false
+                imageEditButton?.setText("ویرایش عکس")
+                if(result != -1){
+                    Toast.makeText(applicationContext, "Plant Image Updated Successfully",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 2 && resultCode == RESULT_OK){
+            var selectedImage: Uri? = null
+            if (data != null) {
+                selectedImage = data?.data
+                try {
+                    val input = contentResolver.openInputStream(selectedImage!!)
+                    val selectedImg = BitmapFactory.decodeStream(input)
+                    plantImageForEdit?.setImageBitmap(selectedImg)
+                    imageBitmap = selectedImg
+                    imageEditButton?.setText("ذخیره عکس")
+                    newImageSelected = true
+
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                    Toast.makeText(this, "An error occurred!", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        }
     }
 
     private fun loadPlantImage() {
