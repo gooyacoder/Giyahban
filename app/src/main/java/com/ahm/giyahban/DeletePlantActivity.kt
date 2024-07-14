@@ -23,7 +23,9 @@ class DeletePlantActivity : AppCompatActivity() {
         setContentView(R.layout.activity_delete_plant)
         getPlantsFromDatabase()
         plantImageView = findViewById(R.id.plantImageView)
-        plantImageView?.setImageBitmap(plants_images?.get(plant_position))
+        if(plants_images!!.size > 0){
+            plantImageView?.setImageBitmap(plants_images?.get(plant_position))
+        }
     }
     private fun getPlantsFromDatabase() {
         val db = DatabaseHelper(this)
