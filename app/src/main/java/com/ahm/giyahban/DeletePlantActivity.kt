@@ -50,6 +50,7 @@ class DeletePlantActivity : AppCompatActivity() {
                 id: Long
             ) {
                 plant_position = position
+                plantImageView?.setImageBitmap(DbBitmapUtility.getImage(plants.get(plant_position).image))
 
             }
 
