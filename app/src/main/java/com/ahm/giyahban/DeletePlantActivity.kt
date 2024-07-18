@@ -74,7 +74,13 @@ class DeletePlantActivity : AppCompatActivity() {
                 plants_names?.clear()
                 plants_images?.clear()
                 getPlantsFromDatabase()
-                plantImageView?.setImageBitmap(plants_images?.get(plant_position))
+                if(plants_images!!.size > 0){
+                    plantImageView?.setImageBitmap(plants_images?.get(0))
+                }
+                else {
+                    plantImageView?.setImageResource(R.mipmap.ic_launcher)
+                }
+
             }
             .setNegativeButton("No") { dialog, id ->
                 // Dismiss the dialog
