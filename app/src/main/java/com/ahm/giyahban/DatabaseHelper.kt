@@ -223,7 +223,7 @@ class DatabaseHelper(context: Context?) :
         update_query =
             "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$water_date_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
-        db.rawQuery(update_query, null)
+        db.execSQL(update_query)
         db.close()
 
     }

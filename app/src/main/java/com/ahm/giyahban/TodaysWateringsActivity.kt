@@ -79,7 +79,7 @@ class TodaysWateringsActivity : AppCompatActivity() {
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
                 resetTasks()
-                showTodayWaterings()
+                //showTodayWaterings()
                 Toast.makeText(this, "Tasks Reset Successfully.", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("No") { dialog, id ->
