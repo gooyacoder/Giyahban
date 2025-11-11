@@ -51,10 +51,18 @@ class TodaysWateringsActivity : AppCompatActivity() {
         val db = DatabaseHelper(this)
         var result = false
         if(plant.water_date != null){
-            val watering_time_passed = calculateDays(today - plant.water_date!!.toLong())
-            if(watering_time_passed == plant.water_period!!.toInt()){
-                result = true
+            val watering_time_passed = calculateDays(today - plant.water_date.toLong())
+            if(watering_time_passed == 0){
+                if((watering_time_passed + 1) % (plant.water_period!!.toInt() + 1) == 0){
+                    result = true
+                }
             }
+            else {
+                if((watering_time_passed) % (plant.water_period!!.toInt()) == 0) {
+                    result = true
+                }
+            }
+
         }
         db.close()
         return result
@@ -78,7 +86,7 @@ class TodaysWateringsActivity : AppCompatActivity() {
         builder.setMessage("Are you sure you want to reset Today's Tasks?")
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
-                resetTasks()
+                //resetTasks()
                 //showTodayWaterings()
                 Toast.makeText(this, "Tasks Reset Successfully.", Toast.LENGTH_SHORT).show()
             }
@@ -92,7 +100,6 @@ class TodaysWateringsActivity : AppCompatActivity() {
     private fun resetTasks() {
         val db = DatabaseHelper(this)
         val plants = db.getPlants()
-        var i = 0
         for(plant in plants){
             if(hasWatering(plant)){
                 db.updatePlantWaterDate(plant.plant_name, today)

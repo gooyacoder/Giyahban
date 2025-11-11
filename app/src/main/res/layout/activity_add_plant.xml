@@ -21,23 +21,24 @@
             android:fontFamily="@font/titr_1"
             android:gravity="center_horizontal"
             android:text="@string/add_new_plant"
-            android:textColor="#99ee66"
-            android:textSize="40sp" />
+            android:textColor="#88dd88"
+            android:textSize="60sp" />
 
         <EditText
             android:id="@+id/name_text"
-            android:layout_width="200dp"
-            android:layout_height="40dp"
+            android:layout_width="250dp"
+            android:layout_height="80dp"
             android:layout_below="@id/label"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="25dp"
-            android:background="#EEFF50"
+            android:background="#ddffaa"
             android:gravity="center"
             android:hint="نام گیاه را وارد کنید"
             android:inputType="textPersonName"
-            android:textColor="#359935"
-            android:textColorHint="#ffcc00"
-
+            android:textColor="#ffffff"
+            android:textColorHint="#88dd88"
+            android:textSize="30sp"
+            android:textStyle="bold"
             />
 
         <ImageView

@@ -37,13 +37,11 @@ class DeletePlantActivity : AppCompatActivity() {
             plants_names!!.add(plant.plant_name)
             plants_images!!.add(DbBitmapUtility.getImage(plant.image))
         }
-        val items = plants_names!!.toTypedArray()
-        val adapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(
-            this, R.layout.custom_spinner_view, items
-        )
+        val items = plants_names!!.toTypedArray().toList()
+        val adapter = custom_spinner_adapter(this, items)
 
-        var namesDropDownSpinner = findViewById<Spinner>(R.id.plants_spinner)
-        namesDropDownSpinner.setAdapter(adapter)
+        val namesDropDownSpinner = findViewById<Spinner>(R.id.plants_spinner)
+        namesDropDownSpinner.adapter = adapter
         namesDropDownSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,

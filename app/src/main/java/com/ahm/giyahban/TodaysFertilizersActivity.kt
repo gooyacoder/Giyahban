@@ -40,10 +40,18 @@ class TodaysFertilizersActivity : AppCompatActivity() {
                     val textView2 = childView.findViewById<TextView>(R.id.fertilizer_plantFertilizers)
                     var fert_text = ""
                     for(fertilizer in plant.fertilizers!!){
-                        val fertilizer_time_passed = calculateDays(today - fertilizer.date!!.toLong())
-                        if(fertilizer_time_passed == fertilizer.period!!.toInt()){
-                            fert_text += fertilizer.name + ", "
+                        val fertilizer_time_passed = calculateDays(today - fertilizer.date.toLong())
+                        if(fertilizer_time_passed == 0){
+                            if((fertilizer_time_passed + 1) % (fertilizer.period.toInt() + 1) == 0){
+                                fert_text += fertilizer.name + ", "
+                            }
                         }
+                        else{
+                            if(fertilizer_time_passed % fertilizer.period.toInt() == 0){
+                                fert_text += fertilizer.name + ", "
+                            }
+                        }
+
                     }
                     textView2.setText(fert_text)
                     parentLayout.addView(childView)
@@ -57,9 +65,16 @@ class TodaysFertilizersActivity : AppCompatActivity() {
         var result = false
         if(plant.fertilizers != null){
             for(fertilizer in plant.fertilizers){
-                val fertilizer_time_passed = calculateDays(today - fertilizer.date!!.toLong())
-                if(fertilizer_time_passed == fertilizer.period!!.toInt()){
-                    result = true
+                val fertilizer_time_passed = calculateDays(today - fertilizer.date.toLong())
+                if(fertilizer_time_passed == 0){
+                    if((fertilizer_time_passed + 1) % (fertilizer.period.toInt() + 1) == 0){
+                        result = true
+                    }
+                }
+                else{
+                    if(fertilizer_time_passed % fertilizer.period.toInt() == 0){
+                        result = true
+                    }
                 }
             }
         }
@@ -87,8 +102,8 @@ class TodaysFertilizersActivity : AppCompatActivity() {
             if(hasFertilizer(plant)){
                 if(plant.fertilizers != null){
                     for(fertilizer in plant.fertilizers){
-                        val fertilizer_time_passed = calculateDays(today - fertilizer.date!!.toLong())
-                        if(fertilizer_time_passed == fertilizer.period!!.toInt()){
+                        val fertilizer_time_passed = calculateDays(today - fertilizer.date.toLong())
+                        if(fertilizer_time_passed == fertilizer.period.toInt()){
                             fertilizer.date = today
                         }
                     }
@@ -103,7 +118,7 @@ class TodaysFertilizersActivity : AppCompatActivity() {
         builder.setMessage("Are you sure you want to reset Today's Tasks?")
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
-                resetTasks()
+                // resetTasks()
                 Toast.makeText(this, "Tasks Reset Successfully.", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("No") { dialog, id ->

@@ -34,6 +34,8 @@ class EditPlantActivity : AppCompatActivity() {
     var imageBitmap: Bitmap? = null
     var newImageSelected = false
 
+    lateinit var kood_textView: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_plant)
@@ -46,6 +48,7 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     private fun prepareUI() {
+        kood_textView = findViewById(R.id.kood_textView)
         imageEditButton = findViewById(R.id.imageEditBtn)
         plantImageForEdit = findViewById(R.id.plantImageEdit)
         namesDropDownSpinner = findViewById(R.id.PlantsDropDownSpinner)
@@ -136,15 +139,28 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     private fun prepareFertilizerDropDownSpinner() {
-        val items = arrayOf( "20-20-20", "12-12-36", "10-52-10", "3-11-38",
-            "Humic Acid", "Fungicide", "Amino Acid", "Seaweed", "Magnesium Sulphate",
-            "Super Phosphate", "Micronutrient", "Iron", "Calcium Nitrate", "Urea",
-            "Zinc Sulphate", "Sulfur", "Potassium Nitrate", "Potassium Sulphate")
+//        val items = arrayOf( "20-20-20", "12-12-36", "10-52-10", "3-11-38",
+//            "Humic Acid", "Fungicide", "Amino Acid", "Seaweed", "Magnesium Sulphate",
+//            "Super Phosphate", "Micronutrient", "Iron", "Calcium Nitrate", "Urea",
+//            "Zinc Sulphate", "Sulfur", "Potassium Nitrate", "Potassium Sulphate")
+        val db = KoodDatabaseHelper(this)
+        val koods = db.getKoods()
+        db.close()
+         val items = koods.toTypedArray().toList()
 
-        val adapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(
-            this, R.layout.custom_spinner_view, items)
+
+        val adapter = custom_spinner_adapter(this, items)
         val fertilizerDropDownSpinner: Spinner = findViewById(R.id.fertilizerDropDownSpinner)
-        fertilizerDropDownSpinner.setAdapter(adapter)
+        fertilizerDropDownSpinner.adapter = adapter
+        fertilizerDropDownSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                kood_textView.text = fertilizerDropDownSpinner.selectedItem.toString()
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                kood_textView.text = fertilizerDropDownSpinner.selectedItem.toString()
+            }
+        }
     }
 
     private fun getPlantsFromDatabase() {
@@ -155,11 +171,10 @@ class EditPlantActivity : AppCompatActivity() {
         for(plant in plants){
             plants_names!!.add(plant.plant_name)
         }
-        val items = plants_names!!.toTypedArray()
-        val adapter: ArrayAdapter<Any?> = ArrayAdapter<Any?>(
-            this, R.layout.custom_spinner_view, items)
+        val items = plants_names!!.toTypedArray().toList()
+        val adapter = custom_spinner_adapter(this, items)
 
-        namesDropDownSpinner?.setAdapter(adapter)
+        namesDropDownSpinner?.adapter = adapter
     }
 
 
@@ -305,6 +320,11 @@ class EditPlantActivity : AppCompatActivity() {
             }
         val alert = builder.create()
         alert.show()
+    }
+
+    fun add_kood_clicked(view: View) {
+        val intent = Intent(this, KoodActivity::class.java)
+        startActivity(intent)
     }
 
 }

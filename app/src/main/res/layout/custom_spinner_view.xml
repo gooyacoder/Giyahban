@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/text1"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="vertical"
+android:gravity="center_horizontal"
+android:padding="8dp">
+
+<!-- Text for the Spinner item -->
+<TextView
+    android:id="@+id/textItem"
     style="?android:attr/spinnerItemStyle"
     android:singleLine="true"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:layout_height="70dp"
     android:ellipsize="marquee"
-    android:gravity="right"
-    android:textSize="10sp"
-    android:textColor="#074"
+    android:gravity="center"
+    android:textSize="30sp"
+    android:textColor="#000"
+    android:textAlignment="center"
+    android:paddingTop="8dp"
+    android:paddingStart="40dp"
+    android:paddingEnd="40dp"
     android:paddingBottom="8dp"
     />
+
+<!-- Divider line -->
+<View
+    android:id="@+id/divider"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="#BDBDBD"
+    android:visibility="visible" />
+</LinearLayout>
+
+
