@@ -3,15 +3,19 @@ package com.ahm.giyahban
 
 
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.*
@@ -23,6 +27,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // Android 11+
+            if (!Environment.isExternalStorageManager()) {
+                // Request MANAGE_EXTERNAL_STORAGE permission
+                val intent: Intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                val uri = Uri.fromParts("package", getPackageName(), null)
+                intent.setData(uri)
+                startActivityForResult(intent, 1)
+            }
+        }
     }
 
     fun add_plant_btn_clicked(view: View) {
@@ -31,18 +44,21 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
 
     }
+
     fun edit_plant_btn_clicked(view: View) {
 
         val intent = Intent(this, EditPlantActivity::class.java)
         startActivity(intent)
 
     }
+
     fun show_plants_tasks_btn_clicked(view: View) {
 
         val intent = Intent(this, TaskChooserActivity::class.java)
         startActivity(intent)
 
     }
+
     fun show_plants_list_btn_clicked(view: View) {
 
         val intent = Intent(this, AllPlantsActivity::class.java)
@@ -63,14 +79,17 @@ class MainActivity : AppCompatActivity() {
                 Save()
                 true
             }
+
             R.id.update -> {
                 update()
                 true
             }
+
             R.id.exit -> {
                 finish()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -97,13 +116,13 @@ class MainActivity : AppCompatActivity() {
         mainHandler.post(myRunnable);
     }
 
-    private fun updateFromFile(){
+    private fun updateFromFile() {
         val text = readFileFromExternalStorage()
         val plants: MutableList<Plant> = Json.decodeFromString(text!!)
         val db = DatabaseHelper(this)
         try {
             db.updatePlants(plants)
-        }catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         db.close()
@@ -115,28 +134,28 @@ class MainActivity : AppCompatActivity() {
         val plants = db.getPlants()
         db.close()
         val plants_string = Json.encodeToString(plants)
-        val myExternalFile = File(getExternalFilesDir("giyahban"), "Data")
-        if(!myExternalFile.exists())
-            myExternalFile.mkdirs()
+        val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+
         try {
-            val fileToWrite = File(myExternalFile, "plants.txt")
+            val fileToWrite = File(dir, "plants.txt")
             val fileOutPutStream = FileOutputStream(fileToWrite)
             fileOutPutStream.write(plants_string.toByteArray())
             fileOutPutStream.close()
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        Toast.makeText(applicationContext,"Plants Data Saved.",Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, "Plants Data Saved.", Toast.LENGTH_SHORT).show()
     }
 
     fun readFileFromExternalStorage(): String? {
-        var myExternalFile = File(getExternalFilesDir("giyahban/Data"), "plants.txt")
+
+        val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+        var myExternalFile = File(dir, "plants.txt")
         var text: String? = null
         var fileInputStream = FileInputStream(myExternalFile)
         var inputStreamReader: InputStreamReader = InputStreamReader(fileInputStream)
         val bufferedReader: BufferedReader = BufferedReader(inputStreamReader)
         val stringBuilder: StringBuilder = StringBuilder()
-
         while ({ text = bufferedReader.readLine(); text }() != null) {
             stringBuilder.append(text)
         }
@@ -144,8 +163,23 @@ class MainActivity : AppCompatActivity() {
         return stringBuilder.toString()
     }
 
+
     fun delete_plant_btn_clicked(view: View) {
         val intent = Intent(this, DeletePlantActivity::class.java)
         startActivity(intent)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, @Nullable data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    // Permission granted
+                } else {
+                    // Permission denied
+                }
+            }
+        }
     }
 }
