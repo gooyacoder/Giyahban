@@ -16,6 +16,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.*
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // Android 11+
             if (!Environment.isExternalStorageManager()) {
                 // Request MANAGE_EXTERNAL_STORAGE permission
