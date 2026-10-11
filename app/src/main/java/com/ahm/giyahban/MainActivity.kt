@@ -2,7 +2,9 @@ package com.ahm.giyahban
 
 
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +18,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -29,16 +32,30 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // Android 11+
-            if (!Environment.isExternalStorageManager()) {
-                // Request MANAGE_EXTERNAL_STORAGE permission
-                val intent: Intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                val uri = Uri.fromParts("package", getPackageName(), null)
-                intent.setData(uri)
-                startActivityForResult(intent, 1)
-            }
+        // Android 11+
+        if (!Environment.isExternalStorageManager()) {
+            // Request MANAGE_EXTERNAL_STORAGE permission
+            val intent: Intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            val uri = Uri.fromParts("package", packageName, null)
+            intent.setData(uri)
+            startActivityForResult(intent, 1)
+        }
+        requestNotificationPermission()
+
+    }
+
+    private fun requestNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                REQUEST_NOTIFICATIONS
+            )
         }
     }
+
 
     fun add_plant_btn_clicked(view: View) {
 
@@ -183,5 +200,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        private const val REQUEST_NOTIFICATIONS = 1001
     }
 }
