@@ -19,10 +19,10 @@ class BootReceiver : BroadcastReceiver() {
 
         executor.execute {
             try {
-                val db = AppDatabase.get(context)
-                val reminders = db.reminderDao().getFuture(System.currentTimeMillis())
+                val db = TaskDatabaseHelper(context)
+                val tasks = db.getFuture(System.currentTimeMillis())
 
-                reminders.forEach { ReminderScheduler.schedule(context, it) }
+                tasks.forEach { ReminderScheduler.schedule(context, it) }
             } finally {
                 executor.shutdown()
                 pendingResult.finish()

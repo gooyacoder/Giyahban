@@ -20,6 +20,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlinx.serialization.json.Json
 import android.provider.Settings
+import android.util.Log
 import java.io.FileNotFoundException
 import java.util.concurrent.Executors
 import androidx.core.net.toUri
@@ -46,9 +47,8 @@ class EditPlantActivity : AppCompatActivity() {
     private var selectedMillis: Long = 0L
 
     private val executor = Executors.newSingleThreadExecutor()
-    private val db by lazy { AppDatabase.get(this) }
 
-    private var list : List<Reminder>? = null
+    private var list : MutableList<Task>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +60,7 @@ class EditPlantActivity : AppCompatActivity() {
         updateFertilizerList()
         updateCurrentWatering()
         requestNotificationPermission()
+        loadTasks()
 
         if(plants_names?.size == 1) {
             startActivity(
@@ -71,9 +72,16 @@ class EditPlantActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveReminder(message : String, days : Int) {
+    private fun loadTasks() {
+        val db = TaskDatabaseHelper(this)
+        list = db.getAllTasks()
+        Toast.makeText(this, "Loaded ${list?.size} tasks",
+            Toast.LENGTH_LONG).show()
+        db.close()
+    }
 
-       // val oldId = editingId
+    private fun saveTask(message : String, days : Int) {
+
         val cal = Calendar.getInstance().apply { add(Calendar.MINUTE, 5) }
         cal.set(Calendar.HOUR_OF_DAY, 6) // 24-hour format
         cal.set(Calendar.MINUTE, 0)
@@ -81,25 +89,34 @@ class EditPlantActivity : AppCompatActivity() {
         cal.set(Calendar.MILLISECOND, 0)
         cal.add(Calendar.DAY_OF_MONTH, days)
         selectedMillis = cal.timeInMillis
-        val reminder = Reminder(title = plants_names?.get(plant_position) ?: "", message = message, triggerAt = selectedMillis)
-
+        val newTask = Task(title = plants_names?.get(plant_position) ?: "", message = message,
+            date = selectedMillis)
         executor.execute {
-
-            if (list != null) {
-                for(val item in list){
-                    if (item.message == reminder.message && item.title == reminder.message){
-                        db.reminderDao().update(reminder)
-                        ReminderScheduler.schedule(this, reminder)
+            val db = TaskDatabaseHelper(this)
+            var task_done = false
+            if(list.isNullOrEmpty()) {
+                val newId = db.addTask(newTask)
+                ReminderScheduler.schedule(this, newTask.copy(id = newId))
+            }
+            else {
+                for(task in list!!){
+                    if(task.title == newTask.title && task.message == newTask.message) {
+                        val taskToUpdate = newTask.copy(id = task.id)
+                        db.updateTask(taskToUpdate)
+                        ReminderScheduler.cancel(this, task.id)
+                        ReminderScheduler.schedule(this, taskToUpdate)
+                        task_done = true
+                        Log.i("ahm", "updated")
                     }
                 }
-            }
-            else{
-
-                val newId = db.reminderDao().insert(reminder)
-                ReminderScheduler.schedule(this, reminder.copy(id = newId))
+                if (!task_done){
+                    val newId = db.addTask(newTask)
+                    ReminderScheduler.schedule(this, newTask.copy(id = newId))
+                }
             }
         }
     }
+
 
 
     private fun prepareUI() {
@@ -165,7 +182,8 @@ class EditPlantActivity : AppCompatActivity() {
 
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
-                    Toast.makeText(this, "An error occurred!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "An error occurred!",
+                        Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -275,7 +293,7 @@ class EditPlantActivity : AppCompatActivity() {
         val date = calendar.time.time.toString()
         db.addWatering(plant_name, date, days)
         currentWateringEditText.text = "$days روز "
-        saveReminder("آبیاری", days.toInt())
+        saveTask("آبیاری", days.toInt())
     }
 
     fun removeFertilizerBtnClicked(view: View) {
@@ -317,7 +335,8 @@ class EditPlantActivity : AppCompatActivity() {
         if(plants_names?.size!! > 0){
             val db = DatabaseHelper(this)
             val fertilizers = db.getFertilizers(plants_names?.get(plant_position))
-            val fertilizerAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
+            val fertilizerAdapter = ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1)
 
             if(fertilizers != null){
                 for((fn, fp) in fertilizers){
@@ -381,7 +400,8 @@ class EditPlantActivity : AppCompatActivity() {
     }
 
     private fun requestNotificationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(

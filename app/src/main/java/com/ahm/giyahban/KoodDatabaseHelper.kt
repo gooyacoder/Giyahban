@@ -45,13 +45,11 @@ class KoodDatabaseHelper (context: Context?) :
         val cv = ContentValues()
         cv.put(KEY_NAME, name)
 
-        val result = database.insert(
+        return database.insert(
             DB_TABLE,
             null,
             cv
-        ) // returns -1 if insert fails, show message that the plant name exists.
-        database.close()
-        return result
+        )
     }
 
     @JvmName("getPlants1")
@@ -65,7 +63,6 @@ class KoodDatabaseHelper (context: Context?) :
             koods.add(kood)
         }
         cursor.close()
-        db.close()
         return koods
     }
 

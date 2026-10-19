@@ -49,9 +49,7 @@ class TaskDatabaseHelper(context: Context?) :
             put(KEY_MESSAGE, message)
             put(KEY_DATE, date)
         }
-        val result = db.insert(DB_TABLE, null, cv)
-        db.close()
-        return result
+        return db.insert(DB_TABLE, null, cv)
     }
 
     @Throws(SQLiteException::class)
@@ -78,7 +76,33 @@ class TaskDatabaseHelper(context: Context?) :
         }
 
         cursor.close()
-        db.close()
+        return taskList
+    }
+
+    @Throws(SQLiteException::class)
+    fun getFuture(now: Long): List<Task> {
+        val taskList = mutableListOf<Task>()
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $DB_TABLE WHERE $KEY_DATE > ? ORDER BY $KEY_DATE ASC"
+        val cursor: Cursor = db.rawQuery(query, arrayOf(now.toString()))
+
+        if (cursor.moveToFirst()) {
+            val idIndex = cursor.getColumnIndexOrThrow(KEY_ID)
+            val titleIndex = cursor.getColumnIndexOrThrow(KEY_TITLE)
+            val messageIndex = cursor.getColumnIndexOrThrow(KEY_MESSAGE)
+            val dateIndex = cursor.getColumnIndexOrThrow(KEY_DATE)
+
+            do {
+                val id = cursor.getLong(idIndex)
+                val title = cursor.getString(titleIndex) ?: ""
+                val message = cursor.getString(messageIndex) ?: ""
+                val date = cursor.getLong(dateIndex)
+
+                taskList.add(Task(id = id, title = title, message = message, date = date))
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
         return taskList
     }
 
@@ -104,7 +128,6 @@ class TaskDatabaseHelper(context: Context?) :
         }
 
         cursor.close()
-        db.close()
         return task
     }
 
@@ -116,17 +139,13 @@ class TaskDatabaseHelper(context: Context?) :
             put(KEY_MESSAGE, task.message)
             put(KEY_DATE, task.date)
         }
-        val rowsAffected = db.update(DB_TABLE, cv, "$KEY_ID = ?", arrayOf(task.id.toString()))
-        db.close()
-        return rowsAffected
+        return db.update(DB_TABLE, cv, "$KEY_ID = ?", arrayOf(task.id.toString()))
     }
 
     @Throws(SQLiteException::class)
     fun deleteTask(id: Long): Int {
         val db = this.writableDatabase
-        val rowsAffected = db.delete(DB_TABLE, "$KEY_ID = ?", arrayOf(id.toString()))
-        db.close()
-        return rowsAffected
+        return db.delete(DB_TABLE, "$KEY_ID = ?", arrayOf(id.toString()))
     }
 
     @Throws(SQLiteException::class)

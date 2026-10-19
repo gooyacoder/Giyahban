@@ -72,7 +72,6 @@ class DatabaseHelper(context: Context?) :
 
             database.insert(DB_TABLE, null, cv)
         }
-        database.close()
     }
 
     @Throws(SQLiteException::class)
@@ -81,13 +80,11 @@ class DatabaseHelper(context: Context?) :
         val cv = ContentValues()
         cv.put(KEY_NAME, name)
         cv.put(KEY_IMAGE, image)
-        val result = database.insert(
+        return database.insert(
             DB_TABLE,
             null,
             cv
-        ) // returns -1 if insert fails, show message that the plant name exists.
-        database.close()
-        return result
+        )
     }
 
 
@@ -97,7 +94,6 @@ class DatabaseHelper(context: Context?) :
             "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers' where $KEY_NAME = '$plantName';"
         val db = this.writableDatabase
         db.execSQL(updateFertilizerQuery)
-        db.close()
     }
 
     fun removeFertilizer(plantName: String?, fertilizers: String?) {
@@ -105,7 +101,6 @@ class DatabaseHelper(context: Context?) :
         val updateFertilizerQuery =
             "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers' where $KEY_NAME = '$plantName';"
         db.execSQL(updateFertilizerQuery)
-        db.close()
     }
 
     @Throws(SQLiteException::class)
@@ -114,7 +109,6 @@ class DatabaseHelper(context: Context?) :
             "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$date', $KEY_PLANT_WATER_PERIOD = '$days' where $KEY_NAME = '$plantName';"
         val db = this.writableDatabase
         db.execSQL(updateWateringQuery)
-        db.close()
     }
 
     @Throws(SQLiteException::class)
@@ -134,7 +128,6 @@ class DatabaseHelper(context: Context?) :
         val updateWateringQuery =
             "update $DB_TABLE set $KEY_PLANT_WATER_DATE = NULL, $KEY_PLANT_WATER_PERIOD = NULL where $KEY_NAME = '$plantName';"
         db.execSQL(updateWateringQuery)
-        db.close()
     }
 
     fun getPlant(name: String?): Plant {
@@ -158,7 +151,7 @@ class DatabaseHelper(context: Context?) :
             if (water_period != null) water_period.toInt() else null,
             if (fertilizers != null) fertilizers else null
         )
-        db.close()
+        cursor.close()
         return plant
     }
 
@@ -187,7 +180,6 @@ class DatabaseHelper(context: Context?) :
             plants.add(plant)
         }
         cursor.close()
-        db.close()
         return plants
     }
 
@@ -196,8 +188,7 @@ class DatabaseHelper(context: Context?) :
         db.execSQL(
             "delete from plant_table where" +
                     " plant_name = \"" + name + "\";"
-        );
-        db.close()
+        )
     }
 
     fun updatePlantImage(name: String, image: ByteArray) : Int{
@@ -206,9 +197,7 @@ class DatabaseHelper(context: Context?) :
         cv.put(KEY_NAME, name)
         cv.put(KEY_IMAGE, image)
         val args = Array<String>(1) { name }
-        val result = db.update(DB_TABLE, cv, "plant_name=?", args)
-        db.close()
-        return result
+        return db.update(DB_TABLE, cv, "plant_name=?", args)
     }
 
     fun updatePlantWaterDate(name: String, water_date: Long) {
@@ -217,8 +206,6 @@ class DatabaseHelper(context: Context?) :
             "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$water_date_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)
-        db.close()
-
     }
 
     fun updatePlantWaterPeriod(name: String, water_period: Int) {
@@ -227,7 +214,6 @@ class DatabaseHelper(context: Context?) :
             "update $DB_TABLE set $KEY_PLANT_WATER_PERIOD = '$water_period_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)
-        db.close()
     }
 
     fun updatePlantFertilizers(name: String, fertilizers: ArrayList<Fertilizer>) {
@@ -236,7 +222,6 @@ class DatabaseHelper(context: Context?) :
             "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)
-        db.close()
     }
 
 
@@ -249,7 +234,6 @@ class DatabaseHelper(context: Context?) :
         var fertilizers: ArrayList<Fertilizer>? = ArrayList()
         var fertilizers_names: ArrayList<String>? = ArrayList()
         var fertilizers_periods: ArrayList<String>? = ArrayList()
-        // read bytearray
 
         if (cursor.moveToNext()) {
             if (cursor.getString(4) != null) {
@@ -264,7 +248,6 @@ class DatabaseHelper(context: Context?) :
             }
         }
         cursor.close()
-        db.close()
         val result: MutableMap<ArrayList<String>?, ArrayList<String>?>? = HashMap()
         result?.set(fertilizers_names, fertilizers_periods)
         return result
@@ -284,7 +267,6 @@ class DatabaseHelper(context: Context?) :
             }
         }
         cursor.close()
-        db.close()
         return fertilizers
     }
 
@@ -308,7 +290,6 @@ class DatabaseHelper(context: Context?) :
         }
 
         cursor.close()
-        db.close()
         return fertilizerDatesArrayList
     }
 
@@ -321,7 +302,6 @@ class DatabaseHelper(context: Context?) :
         cv.put(KEY_PLANT_WATER_PERIOD, plant.water_period)
         cv.put(KEY_PLANT_FERTILIZERS, Json.encodeToString(plant.fertilizers))
         db.insert(DB_TABLE, null, cv)
-        db.close()
     }
 
 

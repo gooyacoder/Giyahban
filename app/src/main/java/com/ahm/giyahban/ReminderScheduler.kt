@@ -7,25 +7,25 @@ import android.content.Intent
 import android.os.Build
 
 object ReminderScheduler {
-    private const val EXTRA_ID = "reminder_id"
+    private const val EXTRA_ID = "id"
 
-    fun schedule(context: Context, reminder: Reminder): Boolean {
+    fun schedule(context: Context, task: Task): Boolean {
         val alarmManager = context.getSystemService(AlarmManager::class.java)
-        val pendingIntent = pendingIntent(context, reminder.id)
+        val pendingIntent = pendingIntent(context, task.id)
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (alarmManager.canScheduleExactAlarms()) {
                 alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
-                    reminder.triggerAt,
+                    task.date,
                     pendingIntent
                 )
                 true
             } else {
-                // Fallback: still schedule the reminder, but timing may be inexact.
+                // Fallback: still schedule the task, but timing may be inexact.
                 alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
-                    reminder.triggerAt,
+                    task.date,
                     pendingIntent
                 )
                 false
@@ -33,16 +33,16 @@ object ReminderScheduler {
         } else {
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                reminder.triggerAt,
+                task.date,
                 pendingIntent
             )
             true
         }
     }
 
-    fun cancel(context: Context, reminderId: Long) {
+    fun cancel(context: Context, taskId: Long) {
         val alarmManager = context.getSystemService(AlarmManager::class.java)
-        alarmManager.cancel(pendingIntent(context, reminderId))
+        alarmManager.cancel(pendingIntent(context, taskId))
     }
 
     private fun pendingIntent(context: Context, id: Long): PendingIntent {
