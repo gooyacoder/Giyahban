@@ -5,12 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
-import java.io.*
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.decodeFromString
-
 
 class DatabaseHelper(context: Context?) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -217,10 +212,8 @@ class DatabaseHelper(context: Context?) :
     }
 
     fun updatePlantWaterDate(name: String, water_date: Long) {
-
-        var update_query = ""
         val water_date_string = water_date.toString()
-        update_query =
+        val update_query =
             "update $DB_TABLE set $KEY_PLANT_WATER_DATE = '$water_date_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)
@@ -229,9 +222,8 @@ class DatabaseHelper(context: Context?) :
     }
 
     fun updatePlantWaterPeriod(name: String, water_period: Int) {
-        var update_query = ""
         val water_period_string = water_period.toString()
-        update_query =
+        val update_query =
             "update $DB_TABLE set $KEY_PLANT_WATER_PERIOD = '$water_period_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)
@@ -239,9 +231,8 @@ class DatabaseHelper(context: Context?) :
     }
 
     fun updatePlantFertilizers(name: String, fertilizers: ArrayList<Fertilizer>) {
-        var update_query = ""
         val fertilizers_string = Json.encodeToString(fertilizers)
-        update_query =
+        val update_query =
             "update $DB_TABLE set $KEY_PLANT_FERTILIZERS = '$fertilizers_string' where $KEY_NAME = '$name';"
         val db = this.writableDatabase
         db.execSQL(update_query)

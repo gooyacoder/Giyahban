@@ -1,7 +1,10 @@
 package com.ahm.giyahban
 
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -11,11 +14,15 @@ import android.widget.*
 import android.widget.AbsListView.CHOICE_MODE_SINGLE
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.encodeToString
+import android.provider.Settings
 import java.io.FileNotFoundException
+import java.util.concurrent.Executors
+import androidx.core.net.toUri
 
 
 class EditPlantActivity : AppCompatActivity() {
@@ -36,6 +43,13 @@ class EditPlantActivity : AppCompatActivity() {
 
     lateinit var kood_textView: TextView
 
+    private var selectedMillis: Long = 0L
+
+    private val executor = Executors.newSingleThreadExecutor()
+    private val db by lazy { AppDatabase.get(this) }
+
+    private var list : List<Reminder>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_plant)
@@ -45,7 +59,48 @@ class EditPlantActivity : AppCompatActivity() {
         prepareFertilizerList()
         updateFertilizerList()
         updateCurrentWatering()
+        requestNotificationPermission()
+
+        if(plants_names?.size == 1) {
+            startActivity(
+                Intent(
+                    Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                    "package:$packageName".toUri()
+                )
+            )
+        }
     }
+
+    private fun saveReminder(message : String, days : Int) {
+
+       // val oldId = editingId
+        val cal = Calendar.getInstance().apply { add(Calendar.MINUTE, 5) }
+        cal.set(Calendar.HOUR_OF_DAY, 6) // 24-hour format
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        cal.add(Calendar.DAY_OF_MONTH, days)
+        selectedMillis = cal.timeInMillis
+        val reminder = Reminder(title = plants_names?.get(plant_position) ?: "", message = message, triggerAt = selectedMillis)
+
+        executor.execute {
+
+            if (list != null) {
+                for(val item in list){
+                    if (item.message == reminder.message && item.title == reminder.message){
+                        db.reminderDao().update(reminder)
+                        ReminderScheduler.schedule(this, reminder)
+                    }
+                }
+            }
+            else{
+
+                val newId = db.reminderDao().insert(reminder)
+                ReminderScheduler.schedule(this, reminder.copy(id = newId))
+            }
+        }
+    }
+
 
     private fun prepareUI() {
         kood_textView = findViewById(R.id.kood_textView)
@@ -204,6 +259,7 @@ class EditPlantActivity : AppCompatActivity() {
         fertilizingEditText.setText("")
     }
 
+    @SuppressLint("SetTextI18n")
     fun wateringBtnClicked(view: View) {
         val db = DatabaseHelper(this)
         val plant_name = plants_names?.get(plant_position)
@@ -218,11 +274,8 @@ class EditPlantActivity : AppCompatActivity() {
         calendar.set(Calendar.MILLISECOND, 0)
         val date = calendar.time.time.toString()
         db.addWatering(plant_name, date, days)
-        if(days != null){
-            currentWateringEditText.text = days + " روز "
-        }else{
-            currentWateringEditText.text = ""
-        }
+        currentWateringEditText.text = "$days روز "
+        saveReminder("آبیاری", days.toInt())
     }
 
     fun removeFertilizerBtnClicked(view: View) {
@@ -325,6 +378,27 @@ class EditPlantActivity : AppCompatActivity() {
     fun add_kood_clicked(view: View) {
         val intent = Intent(this, KoodActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun requestNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                REQUEST_NOTIFICATIONS
+            )
+        }
+    }
+
+    override fun onDestroy() {
+        executor.shutdown()
+        super.onDestroy()
+    }
+
+    companion object {
+        private const val REQUEST_NOTIFICATIONS = 1001
     }
 
 }

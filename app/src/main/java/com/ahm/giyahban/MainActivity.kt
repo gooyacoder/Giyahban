@@ -40,21 +40,11 @@ class MainActivity : AppCompatActivity() {
             intent.setData(uri)
             startActivityForResult(intent, 1)
         }
-        requestNotificationPermission()
+
 
     }
 
-    private fun requestNotificationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                REQUEST_NOTIFICATIONS
-            )
-        }
-    }
+
 
 
     fun add_plant_btn_clicked(view: View) {
@@ -202,7 +192,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    companion object {
-        private const val REQUEST_NOTIFICATIONS = 1001
-    }
+
 }
