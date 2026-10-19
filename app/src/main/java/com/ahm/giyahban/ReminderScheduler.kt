@@ -7,7 +7,7 @@ import android.content.Intent
 import android.os.Build
 
 object ReminderScheduler {
-    private const val EXTRA_ID = "id"
+    private const val EXTRA_ID = "task_id"
 
     fun schedule(context: Context, task: Task): Boolean {
         val alarmManager = context.getSystemService(AlarmManager::class.java)

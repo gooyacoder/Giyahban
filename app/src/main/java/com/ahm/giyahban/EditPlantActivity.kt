@@ -83,7 +83,7 @@ class EditPlantActivity : AppCompatActivity() {
     private fun saveTask(message : String, days : Int) {
 
         val cal = Calendar.getInstance().apply { add(Calendar.MINUTE, 5) }
-        cal.set(Calendar.HOUR_OF_DAY, 6) // 24-hour format
+        cal.set(Calendar.HOUR_OF_DAY, 7) // 24-hour format
         cal.set(Calendar.MINUTE, 0)
         cal.set(Calendar.SECOND, 0)
         cal.set(Calendar.MILLISECOND, 0)
